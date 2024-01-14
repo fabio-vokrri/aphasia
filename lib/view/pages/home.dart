@@ -12,15 +12,9 @@ class HomePage extends StatelessWidget {
     final provider = Provider.of<WordProvider>(context);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Aphasia"),
-      ),
+      appBar: AppBar(title: const Text("Aphasia")),
       body: provider.isEmpty
-          ? const Center(
-              child: Text(
-                "Nessuna parola ancora inserita!",
-              ),
-            )
+          ? const Center(child: Text("Nessuna parola ancora inserita!"))
           : GridView.count(
               padding: const EdgeInsets.all(16.0),
               mainAxisSpacing: 16.0,
@@ -31,6 +25,8 @@ class HomePage extends StatelessWidget {
                   .toList(),
             ),
       floatingActionButton: FloatingActionButton(
+        backgroundColor: Theme.of(context).primaryColor,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
         onPressed: () {
           showModalBottomSheet(
             showDragHandle: true,

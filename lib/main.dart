@@ -6,9 +6,7 @@ import 'package:provider/provider.dart';
 
 void main(List<String> args) {
   SystemChrome.setSystemUIOverlayStyle(
-    const SystemUiOverlayStyle(
-      systemNavigationBarColor: Colors.transparent,
-    ),
+    const SystemUiOverlayStyle(systemNavigationBarColor: Colors.transparent),
   );
   runApp(const Aphasia());
 }

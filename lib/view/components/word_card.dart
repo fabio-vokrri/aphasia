@@ -1,4 +1,6 @@
 import 'package:aphasia/model/word.dart';
+import 'package:aphasia/view/components/delete_dialog.dart';
+import 'package:aphasia/view/components/word_label.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 
@@ -15,9 +17,26 @@ class _WordCardState extends State<WordCard> {
   final tts = FlutterTts();
 
   @override
+  void initState() {
+    initTTS();
+    super.initState();
+  }
+
+  Future<void> initTTS() async {
+    await tts.setVolume(1);
+    await tts.setLanguage("it");
+  }
+
+  @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => tts.speak(widget.word.content),
+      onLongPress: () => showDialog(
+        context: context,
+        builder: (context) {
+          return DeleteDialog(word: widget.word);
+        },
+      ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(16.0),
         child: Container(
@@ -41,32 +60,6 @@ class _WordCardState extends State<WordCard> {
             ],
           ),
         ),
-      ),
-    );
-  }
-}
-
-class WordLabel extends StatelessWidget {
-  const WordLabel({super.key, required this.word});
-
-  final Word word;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: Theme.of(context).primaryColor,
-        borderRadius: const BorderRadius.only(
-          bottomRight: Radius.circular(16),
-          bottomLeft: Radius.circular(16),
-        ),
-      ),
-      child: Text(
-        word.content,
-        style: const TextStyle(color: Colors.white, fontSize: 16),
-        overflow: TextOverflow.fade,
       ),
     );
   }

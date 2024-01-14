@@ -1,7 +1,9 @@
 import 'dart:io';
 
+import 'package:aphasia/extensions/capitalize.dart';
 import 'package:aphasia/model/word.dart';
 import 'package:aphasia/providers/word_provider.dart';
+import 'package:aphasia/view/components/already_added_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
@@ -15,14 +17,16 @@ class CustomBottomSheet extends StatefulWidget {
 }
 
 class _CustomBottomSheetState extends State<CustomBottomSheet> {
+  final _key = GlobalKey<FormState>();
   final _wordController = TextEditingController();
   final _focusNode = FocusNode();
+
   final List<File> _images = [];
 
-  /// picks an image from the gallery
-  Future<void> pickImage() async {
+  /// picks an image from the given `source`.
+  Future<void> pickImageFrom(ImageSource source) async {
     try {
-      final image = await ImagePicker().pickImage(source: ImageSource.gallery);
+      final image = await ImagePicker().pickImage(source: source);
       if (image == null) return;
       _images.add(File(image.path));
       setState(() {});
@@ -56,12 +60,25 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
             style: Theme.of(context).textTheme.titleLarge,
           ),
           const SizedBox(height: 32.0),
-          TextFormField(
-            controller: _wordController,
-            focusNode: _focusNode,
-            decoration: const InputDecoration(
-              border: OutlineInputBorder(),
-              label: Text("Parola"),
+          Form(
+            key: _key,
+            child: TextFormField(
+              controller: _wordController,
+              focusNode: _focusNode,
+              validator: (String? value) {
+                if (value == null || value.isEmpty) {
+                  return "Inserisci una parola";
+                }
+                return null;
+              },
+              decoration: InputDecoration(
+                border: const OutlineInputBorder(),
+                label: const Text("Parola"),
+                suffixIcon: IconButton(
+                  onPressed: () => pickImageFrom(ImageSource.camera),
+                  icon: const Icon(Icons.add_a_photo_rounded),
+                ),
+              ),
             ),
           ),
           const SizedBox(height: 16.0),
@@ -70,7 +87,7 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
             child: Row(
               children: [
                 GestureDetector(
-                  onTap: () => pickImage(),
+                  onTap: () => pickImageFrom(ImageSource.gallery),
                   child: Container(
                     height: 96,
                     width: 96,
@@ -113,13 +130,13 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
             child: FilledButton.icon(
               onPressed: () {
                 // if the word has not been yet typed, do nothing
-                if (_wordController.text.isEmpty) {
+                if (!_key.currentState!.validate()) {
                   _focusNode.unfocus();
                   return;
                 }
 
                 // creates a new word with the given content.
-                final newWord = Word(_wordController.text);
+                final newWord = Word(_wordController.text.capitalized);
                 // adds all the selected images to the new word.
                 newWord.addAllImages(_images);
                 // otherwise, try to insert it in the words list.
@@ -134,13 +151,11 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
                 // if the word has not been added, closes the keyboard
                 _focusNode.unfocus();
                 // and displays a snackbar to warn you so.
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    behavior: SnackBarBehavior.floating,
-                    content: Text(
-                      "Questa parola è già stata agginuta alla tua lista!",
-                    ),
-                  ),
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return const AlreadyAddedDialog();
+                  },
                 );
               },
               icon: const Icon(Icons.add),
