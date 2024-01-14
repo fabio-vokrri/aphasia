@@ -1,6 +1,10 @@
+import 'dart:io';
+
 import 'package:aphasia/model/word.dart';
 import 'package:aphasia/providers/word_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 class CustomBottomSheet extends StatefulWidget {
@@ -13,7 +17,19 @@ class CustomBottomSheet extends StatefulWidget {
 class _CustomBottomSheetState extends State<CustomBottomSheet> {
   final _wordController = TextEditingController();
   final _focusNode = FocusNode();
-  final List<Image> _imageList = [];
+  final List<File> _images = [];
+
+  /// picks an image from the gallery
+  Future<void> pickImage() async {
+    try {
+      final image = await ImagePicker().pickImage(source: ImageSource.gallery);
+      if (image == null) return;
+      _images.add(File(image.path));
+      setState(() {});
+    } on PlatformException catch (e) {
+      debugPrint(e.message);
+    }
+  }
 
   @override
   void dispose() {
@@ -49,29 +65,47 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
             ),
           ),
           const SizedBox(height: 16.0),
-          Row(
-            children: [
-              GestureDetector(
-                onTap: () {
-                  // "add new image" logic
-                },
-                child: Container(
-                  height: 96,
-                  width: 96,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16.0),
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                  child: const Center(
-                    child: Icon(
-                      Icons.add_photo_alternate_rounded,
-                      color: Colors.white,
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: [
+                GestureDetector(
+                  onTap: () => pickImage(),
+                  child: Container(
+                    height: 96,
+                    width: 96,
+                    margin: const EdgeInsets.symmetric(vertical: 8),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16.0),
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                    child: const Center(
+                      child: Icon(
+                        Icons.add_photo_alternate_rounded,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 ),
-              ),
-              ..._imageList,
-            ],
+                const SizedBox(width: 8),
+                ..._images.map(
+                  (File imageFile) {
+                    return Container(
+                      height: 96,
+                      width: 96,
+                      margin: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(16.0),
+                        image: DecorationImage(
+                          image: FileImage(imageFile),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    );
+                  },
+                ).toList(),
+              ],
+            ),
           ),
           const SizedBox(height: 32.0),
           Align(
@@ -84,8 +118,12 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
                   return;
                 }
 
+                // creates a new word with the given content.
+                final newWord = Word(_wordController.text);
+                // adds all the selected images to the new word.
+                newWord.addAllImages(_images);
                 // otherwise, try to insert it in the words list.
-                bool inserted = provider.add(Word(_wordController.text));
+                bool inserted = provider.add(newWord);
                 // if the word has been successfully added to the list
                 // pop the context and return
                 if (inserted) {

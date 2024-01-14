@@ -3,21 +3,10 @@ import 'dart:collection';
 import 'package:aphasia/model/word.dart';
 import 'package:flutter/material.dart';
 
+/// Provider class for the words saved by the user
 class WordProvider extends ChangeNotifier {
   final List<Word> _words = [
-    Word(
-      "Ciao!",
-      images: [
-        Image.asset(
-          "assets/images/waving_people_1.jpg",
-          fit: BoxFit.cover,
-        ),
-        Image.asset(
-          "assets/images/waving_people_2.jpg",
-          fit: BoxFit.cover,
-        ),
-      ],
-    ),
+    Word("Ciao!"),
   ];
 
   /// # IMPLEMENT TRIE FOR FASTER SEARCHES.
