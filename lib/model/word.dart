@@ -7,10 +7,6 @@ class Word {
 
   Word(this.content);
 
-  void addImage(File image) {
-    _images.add(image);
-  }
-
   void addAllImages(List<File> images) {
     _images.addAll(images);
   }
