@@ -1,3 +1,4 @@
+import 'package:aphasia/db/words_db.dart';
 import 'package:aphasia/providers/word_provider.dart';
 import 'package:aphasia/view/components/bottom_sheet.dart';
 import 'package:aphasia/view/components/word_card.dart';
@@ -16,25 +17,55 @@ class _HomePageState extends State<HomePage> {
   WordFilter _filter = WordFilter.all;
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    DatabaseService.close();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final provider = Provider.of<WordProvider>(context);
+    const double goldenRatio = 1.61803398875;
 
     return Scaffold(
       appBar: AppBar(title: const Text("Aphasia")),
-      body: provider.filter(_filter).isEmpty
-          ? const Center(child: Text("Nessuna parola ancora aggiunta!"))
-          : GridView.count(
-              crossAxisCount: 2,
-              padding: const EdgeInsets.all(16.0),
-              mainAxisSpacing: 8,
-              crossAxisSpacing: 8,
-              childAspectRatio: 0.61803398875,
-              children: provider
-                  .filter(_filter)
-                  .map((word) => WordCard(word: word))
-                  .toList(),
-            ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.miniEndDocked,
+      body: FutureBuilder(
+        future: provider.isInitCompleted,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(),
+                  SizedBox(height: 16),
+                  Text("Sto caricando le tue parole...")
+                ],
+              ),
+            );
+          }
+
+          return provider.filter(_filter).isEmpty
+              ? const Center(child: Text("Nessuna parola ancora aggiunta!"))
+              : GridView.count(
+                  crossAxisCount: 2,
+                  padding: const EdgeInsets.all(16.0),
+                  mainAxisSpacing: 8,
+                  crossAxisSpacing: 8,
+                  childAspectRatio: goldenRatio - 1,
+                  children: provider
+                      .filter(_filter)
+                      .map((word) => WordCard(word: word))
+                      .toList(),
+                );
+        },
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: FloatingActionButton(
         backgroundColor: Theme.of(context).primaryColor,
         foregroundColor: Theme.of(context).colorScheme.onPrimary,

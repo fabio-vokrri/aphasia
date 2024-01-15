@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:aphasia/extensions/capitalize.dart';
 import 'package:aphasia/model/word.dart';
 import 'package:aphasia/providers/word_provider.dart';
-import 'package:aphasia/view/components/already_added_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
@@ -127,34 +126,18 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
             alignment: Alignment.centerRight,
             child: FilledButton.icon(
               onPressed: () {
-                // if the word has not been yet typed, do nothing
+                // if the word has not been typed yet, do nothing
                 if (!_key.currentState!.validate()) {
                   _focusNode.unfocus();
                   return;
                 }
 
-                // creates a new word with the given content.
-                final newWord = Word(_wordController.text.capitalized);
-                // adds all the selected images to the new word.
-                newWord.addAllImages(_images);
-                // otherwise, try to insert it in the words list.
-                bool inserted = provider.add(newWord);
-                // if the word has been successfully added to the list
-                // pop the context and return
-                if (inserted) {
-                  Navigator.pop(context);
-                  return;
-                }
+                // creates a new word with the given content and adds all the corresponding images
+                final newWord = Word(_wordController.text.capitalized)
+                  ..addAllImages(_images);
 
-                // if the word has not been added, closes the keyboard
-                _focusNode.unfocus();
-                // and displays a snackbar to warn you so.
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    return const AlreadyAddedDialog();
-                  },
-                );
+                provider.add(newWord);
+                Navigator.pop(context);
               },
               icon: const Icon(Icons.add),
               label: const Text("Aggiungi alle parole"),

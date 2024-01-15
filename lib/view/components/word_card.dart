@@ -17,11 +17,13 @@ class WordCard extends StatelessWidget {
     final provider = Provider.of<WordProvider>(context);
 
     return GestureDetector(
-      onTap: () => tts.speak(word.content),
-      onLongPress: () => showDialog(
-        context: context,
-        builder: (context) => DeleteDialog(word: word),
-      ),
+      onTap: () => tts.speak(word.getContent),
+      onLongPress: () {
+        showDialog(
+          context: context,
+          builder: (context) => DeleteDialog(word: word),
+        );
+      },
       child: ClipRRect(
         borderRadius: BorderRadius.circular(16.0),
         child: Container(

@@ -15,7 +15,7 @@ class WordLabel extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(color: theme.primaryColor),
       child: Text(
-        word.content,
+        word.getContent,
         style: TextStyle(
           color: theme.colorScheme.onPrimary,
           fontSize: 18,
