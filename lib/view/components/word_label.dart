@@ -8,21 +8,17 @@ class WordLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Container(
-      padding: const EdgeInsets.all(12),
       width: double.infinity,
-      decoration: BoxDecoration(
-        color: Theme.of(context).primaryColor,
-        borderRadius: const BorderRadius.only(
-          bottomRight: Radius.circular(16),
-          bottomLeft: Radius.circular(16),
-        ),
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(color: theme.primaryColor),
       child: Text(
         word.content,
         style: TextStyle(
-          color: Theme.of(context).colorScheme.onPrimary,
-          fontSize: 16,
+          color: theme.colorScheme.onPrimary,
+          fontSize: 18,
         ),
         overflow: TextOverflow.fade,
       ),

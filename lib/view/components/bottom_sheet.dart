@@ -47,9 +47,7 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
 
     return Padding(
       padding: const EdgeInsets.all(32.0).add(
-        EdgeInsets.only(
-          bottom: MediaQuery.of(context).viewInsets.bottom,
-        ),
+        EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -65,6 +63,7 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
             child: TextFormField(
               controller: _wordController,
               focusNode: _focusNode,
+              maxLength: 50,
               validator: (String? value) {
                 if (value == null || value.isEmpty) {
                   return "Inserisci una parola";
@@ -81,7 +80,6 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
               ),
             ),
           ),
-          const SizedBox(height: 16.0),
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Row(

@@ -3,13 +3,18 @@ import 'dart:collection';
 import 'package:aphasia/model/word.dart';
 import 'package:flutter/material.dart';
 
+enum WordFilter {
+  all,
+  favourites,
+}
+
 /// Provider class for the words saved by the user
 class WordProvider extends ChangeNotifier {
   final List<Word> _words = [
-    Word("Ciao!"),
+    Word("Benvenuto!", isFavourite: true),
   ];
 
-  /// # IMPLEMENT TRIE FOR FASTER SEARCHES.
+  /// # IMPLEMENT TRIE FOR FASTER SEARCHES!
   ///
   /// Adds the given `word` to the words provider list.
   ///
@@ -38,6 +43,24 @@ class WordProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  bool get isEmpty => _words.isEmpty;
-  UnmodifiableListView<Word> get getWords => UnmodifiableListView(_words);
+  /// Toggles the favourite flag on the given `word`.
+  void toggleFavourite(Word word) {
+    word.toggleFavourite();
+    notifyListeners();
+  }
+
+  UnmodifiableListView<Word> filter(WordFilter filter) {
+    return switch (filter) {
+      WordFilter.favourites => _getFavouriteWords,
+      WordFilter.all => _getAllWords,
+    };
+  }
+
+  UnmodifiableListView<Word> get _getAllWords {
+    return UnmodifiableListView(_words);
+  }
+
+  UnmodifiableListView<Word> get _getFavouriteWords {
+    return UnmodifiableListView(_words.where((Word word) => word.isFavourite));
+  }
 }

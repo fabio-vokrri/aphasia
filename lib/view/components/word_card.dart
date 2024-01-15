@@ -1,61 +1,60 @@
 import 'package:aphasia/model/word.dart';
+import 'package:aphasia/providers/tts_provider.dart';
+import 'package:aphasia/providers/word_provider.dart';
 import 'package:aphasia/view/components/delete_dialog.dart';
 import 'package:aphasia/view/components/word_label.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_tts/flutter_tts.dart';
+import 'package:provider/provider.dart';
 
-class WordCard extends StatefulWidget {
+class WordCard extends StatelessWidget {
   const WordCard({super.key, required this.word});
 
   final Word word;
 
   @override
-  State<WordCard> createState() => _WordCardState();
-}
-
-class _WordCardState extends State<WordCard> {
-  final tts = FlutterTts();
-
-  @override
-  void initState() {
-    initTTS();
-    super.initState();
-  }
-
-  Future<void> initTTS() async {
-    await tts.setVolume(1);
-    await tts.setLanguage("it");
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final tts = Provider.of<TTSProvider>(context).getTTSService;
+    final provider = Provider.of<WordProvider>(context);
+
     return GestureDetector(
-      onTap: () => tts.speak(widget.word.content),
+      onTap: () => tts.speak(word.content),
       onLongPress: () => showDialog(
         context: context,
-        builder: (context) {
-          return DeleteDialog(word: widget.word);
-        },
+        builder: (context) => DeleteDialog(word: word),
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(16.0),
         child: Container(
-          alignment: Alignment.bottomLeft,
           decoration: BoxDecoration(color: Theme.of(context).primaryColor),
           child: Stack(
             children: [
               PageView.builder(
-                itemCount: widget.word.getImages.length,
+                itemCount: word.getImages.length,
                 itemBuilder: (context, index) {
                   return Image.file(
-                    widget.word.getImages[index],
+                    word.getImages[index],
                     fit: BoxFit.cover,
                   );
                 },
               ),
               Align(
                 alignment: Alignment.bottomCenter,
-                child: WordLabel(word: widget.word),
+                child: WordLabel(word: word),
+              ),
+              Align(
+                alignment: Alignment.topRight,
+                child: IconButton.filled(
+                  style: IconButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  onPressed: () => provider.toggleFavourite(word),
+                  icon: Icon(
+                    word.isFavourite ? Icons.favorite : Icons.favorite_border,
+                  ),
+                ),
               ),
             ],
           ),
