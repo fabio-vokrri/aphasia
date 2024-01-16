@@ -27,22 +27,18 @@ class WordCard extends StatelessWidget {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(16.0),
         child: Container(
-          decoration: BoxDecoration(color: Theme.of(context).primaryColor),
-          child: Stack(
-            children: [
-              PageView.builder(
-                itemCount: word.getImages.length,
-                itemBuilder: (context, index) {
-                  return Image.file(
-                    word.getImages[index],
+          decoration: BoxDecoration(
+            color: Theme.of(context).primaryColor,
+            image: word.getImage != null
+                ? DecorationImage(
+                    image: MemoryImage(word.getImage!),
                     fit: BoxFit.cover,
-                  );
-                },
-              ),
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: WordLabel(word: word),
-              ),
+                  )
+                : null,
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
               Align(
                 alignment: Alignment.topRight,
                 child: IconButton.filled(
@@ -57,6 +53,10 @@ class WordCard extends StatelessWidget {
                     word.isFavourite ? Icons.favorite : Icons.favorite_border,
                   ),
                 ),
+              ),
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: WordLabel(word: word),
               ),
             ],
           ),

@@ -1,8 +1,8 @@
-import 'dart:io';
-
 import 'package:aphasia/extensions/capitalize.dart';
 import 'package:aphasia/model/word.dart';
+import 'package:aphasia/providers/tts_provider.dart';
 import 'package:aphasia/providers/word_provider.dart';
+import 'package:aphasia/view/components/image_loader_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
@@ -20,14 +20,14 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
   final _wordController = TextEditingController();
   final _focusNode = FocusNode();
 
-  final List<File> _images = [];
+  Uint8List? _image;
 
   /// picks an image from the given `source`.
   Future<void> pickImageFrom(ImageSource source) async {
     try {
       final image = await ImagePicker().pickImage(source: source);
       if (image == null) return;
-      _images.add(File(image.path));
+      _image = await image.readAsBytes();
       setState(() {});
     } on PlatformException catch (e) {
       debugPrint(e.message);
@@ -43,18 +43,21 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<WordProvider>(context);
+    final tts = Provider.of<TTSProvider>(context).getTTSService;
+    final theme = Theme.of(context);
 
     return Padding(
-      padding: const EdgeInsets.all(32.0).add(
-        EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 32.0) +
+          EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom + 32,
+          ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             "Aggiungi una nuova parola",
-            style: Theme.of(context).textTheme.titleLarge,
+            style: theme.textTheme.titleLarge,
           ),
           const SizedBox(height: 32.0),
           Form(
@@ -73,53 +76,30 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
                 border: const OutlineInputBorder(),
                 label: const Text("Parola"),
                 suffixIcon: IconButton(
-                  onPressed: () => pickImageFrom(ImageSource.camera),
-                  icon: const Icon(Icons.add_a_photo_rounded),
+                  onPressed: _wordController.text.isEmpty
+                      ? () {}
+                      : () => tts.speak(_wordController.text),
+                  icon: const Icon(Icons.volume_up_rounded),
+                  tooltip: "Riproduci parola",
                 ),
               ),
             ),
           ),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: [
-                GestureDetector(
-                  onTap: () => pickImageFrom(ImageSource.gallery),
-                  child: Container(
-                    height: 96,
-                    width: 96,
-                    margin: const EdgeInsets.symmetric(vertical: 8),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(16.0),
-                      color: Theme.of(context).colorScheme.primary,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: _image == null
+                ? [
+                    ImageLoaderCard(
+                      onTap: () => pickImageFrom(ImageSource.gallery),
+                      icon: Icons.collections_rounded,
                     ),
-                    child: const Center(
-                      child: Icon(
-                        Icons.add_photo_alternate_rounded,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                ..._images.map(
-                  (File imageFile) {
-                    return Container(
-                      height: 96,
-                      width: 96,
-                      margin: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(16.0),
-                        image: DecorationImage(
-                          image: FileImage(imageFile),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    );
-                  },
-                ).toList(),
-              ],
-            ),
+                    const SizedBox(width: 16),
+                    ImageLoaderCard(
+                      onTap: () => pickImageFrom(ImageSource.camera),
+                      icon: Icons.add_a_photo_rounded,
+                    )
+                  ]
+                : [ImageLoaderCard(imageBytes: _image)],
           ),
           const SizedBox(height: 32.0),
           Align(
@@ -133,8 +113,10 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
                 }
 
                 // creates a new word with the given content and adds all the corresponding images
-                final newWord = Word(_wordController.text.capitalized)
-                  ..addAllImages(_images);
+                final newWord = Word(
+                  _wordController.text.capitalized,
+                  image: _image,
+                );
 
                 provider.add(newWord);
                 Navigator.pop(context);

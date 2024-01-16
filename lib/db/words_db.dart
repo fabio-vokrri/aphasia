@@ -1,4 +1,5 @@
 import 'package:aphasia/model/word.dart';
+import 'package:flutter/services.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -21,14 +22,24 @@ class DatabaseService {
     // here it's used as a primary key
     batch.execute(
       """
-        CREATE TABLE words(
+        CREATE TABLE $_dbName(
           id TEXT PRIMARY KEY NOT NULL, 
-          isFavourite INTEGER NOT NULL
+          isFavourite INTEGER NOT NULL,
+          image BLOB
         )
       """,
     );
 
-    batch.insert(_dbName, Word("Benvenuto!", isFavourite: true).toMap());
+    // inserts a welcome word into the database on first creation
+    batch.insert(
+        _dbName,
+        Word(
+          "Benvenuto!",
+          isFavourite: true,
+          image: (await rootBundle.load("assets/welcome_image.jpg"))
+              .buffer
+              .asUint8List(),
+        ).toMap());
 
     await batch.commit();
   }
@@ -71,6 +82,7 @@ class DatabaseService {
     );
   }
 
+  /// Updates the given `word` with new data.
   Future<void> update(Word word) async {
     final db = await _databaseService.getInstance;
 
