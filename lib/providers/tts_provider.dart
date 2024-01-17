@@ -1,17 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_tts/flutter_tts.dart';
+import 'package:flutter/services.dart';
 
-class TTSProvider extends ChangeNotifier {
-  final _tts = FlutterTts();
+class TTSProvider {
+  static const _platform = MethodChannel("tts_service");
 
-  TTSProvider() {
-    _ttsInit();
+  static Future<void> speak(String word) async {
+    try {
+      _platform.invokeMethod("speak", word);
+    } on PlatformException catch (e) {
+      debugPrint(e.message);
+    }
   }
-
-  Future<void> _ttsInit() async {
-    await _tts.setVolume(1);
-    await _tts.setLanguage("it");
-  }
-
-  FlutterTts get getTTSService => _tts;
 }

@@ -13,11 +13,11 @@ class WordCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tts = Provider.of<TTSProvider>(context).getTTSService;
     final provider = Provider.of<WordProvider>(context);
+    final theme = Theme.of(context);
 
     return GestureDetector(
-      onTap: () => tts.speak(word.getContent),
+      onTap: () => TTSProvider.speak(word.getContent),
       onLongPress: () {
         showDialog(
           context: context,
@@ -28,7 +28,7 @@ class WordCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16.0),
         child: Container(
           decoration: BoxDecoration(
-            color: Theme.of(context).primaryColor,
+            color: theme.primaryColor,
             image: word.getImage != null
                 ? DecorationImage(
                     image: MemoryImage(word.getImage!),
@@ -43,7 +43,7 @@ class WordCard extends StatelessWidget {
                 alignment: Alignment.topRight,
                 child: IconButton.filled(
                   style: IconButton.styleFrom(
-                    foregroundColor: Colors.white,
+                    foregroundColor: theme.colorScheme.onPrimary,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),

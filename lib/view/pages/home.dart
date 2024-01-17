@@ -17,11 +17,6 @@ class _HomePageState extends State<HomePage> {
   WordFilter _filter = WordFilter.all;
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   void dispose() {
     DatabaseService.close();
     super.dispose();

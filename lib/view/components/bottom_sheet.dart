@@ -16,6 +16,7 @@ class CustomBottomSheet extends StatefulWidget {
 }
 
 class _CustomBottomSheetState extends State<CustomBottomSheet> {
+  double goldenRatio = 1.61803398875;
   final _key = GlobalKey<FormState>();
   final _wordController = TextEditingController();
   final _focusNode = FocusNode();
@@ -24,8 +25,14 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
 
   /// picks an image from the given `source`.
   Future<void> pickImageFrom(ImageSource source) async {
+    const double maxHeight = 1000;
+
     try {
-      final image = await ImagePicker().pickImage(source: source);
+      final image = await ImagePicker().pickImage(
+        source: source,
+        maxHeight: maxHeight,
+        maxWidth: maxHeight / (goldenRatio - 1),
+      );
       if (image == null) return;
       _image = await image.readAsBytes();
       setState(() {});
@@ -43,7 +50,6 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<WordProvider>(context);
-    final tts = Provider.of<TTSProvider>(context).getTTSService;
     final theme = Theme.of(context);
 
     return Padding(
@@ -76,9 +82,7 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
                 border: const OutlineInputBorder(),
                 label: const Text("Parola"),
                 suffixIcon: IconButton(
-                  onPressed: _wordController.text.isEmpty
-                      ? () {}
-                      : () => tts.speak(_wordController.text),
+                  onPressed: () => TTSProvider.speak(_wordController.text),
                   icon: const Icon(Icons.volume_up_rounded),
                   tooltip: "Riproduci parola",
                 ),
