@@ -17,7 +17,7 @@ class WordCard extends StatelessWidget {
     final theme = Theme.of(context);
 
     return GestureDetector(
-      onTap: () => TTSProvider.speak(word.getContent),
+      onTap: () => TTSProvider.speak(word.content),
       onLongPress: () {
         showDialog(
           context: context,
@@ -29,9 +29,9 @@ class WordCard extends StatelessWidget {
         child: Container(
           decoration: BoxDecoration(
             color: theme.primaryColor,
-            image: word.getImage != null
+            image: word.image != null
                 ? DecorationImage(
-                    image: MemoryImage(word.getImage!),
+                    image: MemoryImage(word.image!),
                     fit: BoxFit.cover,
                   )
                 : null,

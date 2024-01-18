@@ -29,11 +29,11 @@ class Word {
     );
   }
 
-  String get getContent => _content;
-  String get getId => _content;
+  String get content => _content;
+  String get id => _content;
   bool get isFavourite => _isFavourite;
 
-  Uint8List? get getImage {
+  Uint8List? get image {
     return _image;
   }
 

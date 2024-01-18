@@ -1,3 +1,5 @@
+import 'package:aphasia/providers/tts_provider.dart';
+import 'package:aphasia/providers/user_provider.dart';
 import 'package:aphasia/providers/word_provider.dart';
 import 'package:aphasia/view/pages/home.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +20,8 @@ void main(List<String> args) {
     DeviceOrientation.portraitDown,
   ]);
 
+  TTSProvider.init();
+
   runApp(const Aphasia());
 }
 
@@ -26,8 +30,11 @@ class Aphasia extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => WordProvider(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => WordProvider()),
+        ChangeNotifierProvider(create: (context) => UserProvider())
+      ],
       child: MaterialApp(
         title: "Aphasia",
         debugShowCheckedModeBanner: false,

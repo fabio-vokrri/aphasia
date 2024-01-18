@@ -13,17 +13,19 @@ class MainActivity : FlutterActivity() {
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
 
-        tts = TextToSpeech(this) {
-            tts.setLanguage(Locale.ITALY)
-        }
-        
-
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, channel).setMethodCallHandler { call, _ ->
+            if (call.method == "init") init()
             if (call.method == "speak") speak(call.arguments as String)
         }
     }
 
     private fun speak(word: String) {
         tts.speak(word, TextToSpeech.QUEUE_FLUSH, null, null);
+    }
+
+    private fun init() {
+        tts = TextToSpeech(this) {
+            tts.setLanguage(Locale.ITALY)
+        }
     }
 }

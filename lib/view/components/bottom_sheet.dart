@@ -1,5 +1,6 @@
 import 'package:aphasia/extensions/capitalize.dart';
 import 'package:aphasia/model/word.dart';
+import 'package:aphasia/providers/image_service.dart';
 import 'package:aphasia/providers/tts_provider.dart';
 import 'package:aphasia/providers/word_provider.dart';
 import 'package:aphasia/view/components/image_loader_card.dart';
@@ -23,24 +24,6 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
 
   Uint8List? _image;
 
-  /// picks an image from the given `source`.
-  Future<void> pickImageFrom(ImageSource source) async {
-    const double maxHeight = 1000;
-
-    try {
-      final image = await ImagePicker().pickImage(
-        source: source,
-        maxHeight: maxHeight,
-        maxWidth: maxHeight / (goldenRatio - 1),
-      );
-      if (image == null) return;
-      _image = await image.readAsBytes();
-      setState(() {});
-    } on PlatformException catch (e) {
-      debugPrint(e.message);
-    }
-  }
-
   @override
   void dispose() {
     _wordController.dispose();
@@ -63,7 +46,8 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
         children: [
           Text(
             "Aggiungi una nuova parola",
-            style: theme.textTheme.titleLarge,
+            style: theme.textTheme.titleLarge!
+                .copyWith(overflow: TextOverflow.fade),
           ),
           const SizedBox(height: 32.0),
           Form(
@@ -94,16 +78,47 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
             children: _image == null
                 ? [
                     ImageLoaderCard(
-                      onTap: () => pickImageFrom(ImageSource.gallery),
+                      onTap: () async {
+                        _image = await ImageService.pickImageFrom(
+                          ImageSource.gallery,
+                        );
+
+                        setState(() {});
+                      },
                       icon: Icons.collections_rounded,
                     ),
                     const SizedBox(width: 16),
                     ImageLoaderCard(
-                      onTap: () => pickImageFrom(ImageSource.camera),
+                      onTap: () async {
+                        _image = await ImageService.pickImageFrom(
+                          ImageSource.camera,
+                        );
+
+                        setState(() {});
+                      },
                       icon: Icons.add_a_photo_rounded,
-                    )
+                    ),
                   ]
-                : [ImageLoaderCard(imageBytes: _image)],
+                : [
+                    ImageLoaderCard(imageBytes: _image),
+                    const SizedBox(width: 32),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Text("Non ti piace?"),
+                        const SizedBox(height: 16),
+                        FilledButton.icon(
+                          onPressed: () {
+                            _image = null;
+                            setState(() {});
+                          },
+                          icon: const Icon(Icons.refresh),
+                          label: const Text("Riprova"),
+                        ),
+                      ],
+                    )
+                  ],
           ),
           const SizedBox(height: 32.0),
           Align(

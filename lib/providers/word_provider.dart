@@ -12,11 +12,11 @@ enum WordFilter {
 /// Provider class for the words saved by the user
 class WordProvider extends ChangeNotifier {
   Future? isInitCompleted;
-  final DatabaseService _dataBaseService;
+  final WordsDatabaseService _dataBaseService;
 
   List<Word> _words = [];
 
-  WordProvider() : _dataBaseService = DatabaseService() {
+  WordProvider() : _dataBaseService = WordsDatabaseService() {
     isInitCompleted = init();
   }
 
@@ -32,7 +32,7 @@ class WordProvider extends ChangeNotifier {
     // searches if a word inside the words list has
     // the same content as the one the user is trying to insert.
     int index = _words.indexWhere(
-      (Word element) => element.getContent == word.getContent,
+      (Word element) => element.content == word.content,
     );
 
     // if a word was found, nothing is done.
@@ -72,5 +72,24 @@ class WordProvider extends ChangeNotifier {
 
   UnmodifiableListView<Word> get _getFavouriteWords {
     return UnmodifiableListView(_words.where((Word word) => word.isFavourite));
+  }
+
+  int get getLength => _words.length;
+
+  String getWordsCountString() {
+    StringBuffer result = StringBuffer();
+    if (_words.isEmpty) {
+      result.write("Nessuna");
+    } else {
+      result.write(_words.length.toString());
+    }
+
+    if (_words.length <= 1) {
+      result.write(" parola aggiunta");
+    } else {
+      result.write(" parole aggiunte");
+    }
+
+    return result.toString();
   }
 }

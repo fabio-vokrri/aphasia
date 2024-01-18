@@ -11,7 +11,10 @@ class DeleteDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<WordProvider>(context);
+    final theme = Theme.of(context);
+
     return AlertDialog(
+      icon: const Icon(Icons.delete),
       title: const Text("Eliminare la parola?"),
       content: const Text(
         "Una volta eliminata, la parola non può più essere recuperata. Sicuro di voler procedere?",
@@ -23,8 +26,8 @@ class DeleteDialog extends StatelessWidget {
         ),
         ElevatedButton(
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.red,
-            foregroundColor: Colors.white,
+            backgroundColor: theme.colorScheme.error,
+            foregroundColor: theme.colorScheme.onError,
           ),
           onPressed: () {
             provider.delete(word);
