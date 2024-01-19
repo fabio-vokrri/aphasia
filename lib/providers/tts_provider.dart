@@ -12,6 +12,7 @@ class TTSProvider {
     }
   }
 
+  /// Speaks out loud the given `word`.
   static void speak(String word) {
     try {
       _platform.invokeMethod("speak", word);

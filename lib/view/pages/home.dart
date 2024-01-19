@@ -1,6 +1,6 @@
 import 'package:aphasia/db/words_db.dart';
 import 'package:aphasia/providers/word_provider.dart';
-import 'package:aphasia/view/components/bottom_sheet.dart';
+import 'package:aphasia/view/components/add_word_bottom_sheet.dart';
 import 'package:aphasia/view/components/custom_drawer.dart';
 import 'package:aphasia/view/components/word_card.dart';
 import 'package:flutter/material.dart';
@@ -66,6 +66,7 @@ class _HomePageState extends State<HomePage> {
       drawer: const CustomDrawer(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: FloatingActionButton(
+        tooltip: "Aggiungi nuova parola",
         backgroundColor: theme.primaryColor,
         foregroundColor: theme.colorScheme.onPrimary,
         onPressed: () {
@@ -74,14 +75,13 @@ class _HomePageState extends State<HomePage> {
             enableDrag: true,
             isScrollControlled: true,
             context: context,
-            builder: (context) => const CustomBottomSheet(),
+            builder: (context) => const AddWordBottomSheet(),
           );
         },
         child: const Icon(Icons.add),
       ),
       bottomNavigationBar: NavigationBar(
         selectedIndex: _currentIndex,
-        labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
         onDestinationSelected: (int index) {
           setState(() {
             _currentIndex = index;

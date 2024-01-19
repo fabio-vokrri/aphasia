@@ -19,7 +19,7 @@ class CustomDrawerHeader extends StatelessWidget {
         future: userProvider.isInitCompleted,
         builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const CircularProgressIndicator();
+            return const Center(child: CircularProgressIndicator());
           }
 
           return Padding(

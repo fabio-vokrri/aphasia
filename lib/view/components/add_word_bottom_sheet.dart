@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:aphasia/extensions/capitalize.dart';
 import 'package:aphasia/model/word.dart';
 import 'package:aphasia/providers/image_service.dart';
@@ -5,24 +7,24 @@ import 'package:aphasia/providers/tts_provider.dart';
 import 'package:aphasia/providers/word_provider.dart';
 import 'package:aphasia/view/components/image_loader_card.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
-class CustomBottomSheet extends StatefulWidget {
-  const CustomBottomSheet({super.key});
+class AddWordBottomSheet extends StatefulWidget {
+  const AddWordBottomSheet({super.key});
 
   @override
-  State<CustomBottomSheet> createState() => _CustomBottomSheetState();
+  State<AddWordBottomSheet> createState() => _AddWordBottomSheetState();
 }
 
-class _CustomBottomSheetState extends State<CustomBottomSheet> {
+class _AddWordBottomSheetState extends State<AddWordBottomSheet> {
   double goldenRatio = 1.61803398875;
+
   final _key = GlobalKey<FormState>();
   final _wordController = TextEditingController();
   final _focusNode = FocusNode();
 
-  Uint8List? _image;
+  (Uint8List? content, String? label)? _imageData;
 
   @override
   void dispose() {
@@ -75,11 +77,11 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
-            children: _image == null
+            children: _imageData == null
                 ? [
                     ImageLoaderCard(
                       onTap: () async {
-                        _image = await ImageService.pickImageFrom(
+                        _imageData = await ImageService.pickImageFrom(
                           ImageSource.gallery,
                         );
 
@@ -90,7 +92,7 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
                     const SizedBox(width: 16),
                     ImageLoaderCard(
                       onTap: () async {
-                        _image = await ImageService.pickImageFrom(
+                        _imageData = await ImageService.pickImageFrom(
                           ImageSource.camera,
                         );
 
@@ -100,7 +102,7 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
                     ),
                   ]
                 : [
-                    ImageLoaderCard(imageBytes: _image),
+                    ImageLoaderCard(imageBytes: _imageData!.$1),
                     const SizedBox(width: 32),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -110,14 +112,16 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
                         const SizedBox(height: 16),
                         FilledButton.icon(
                           onPressed: () {
-                            _image = null;
+                            _imageData = null;
                             setState(() {});
                           },
                           icon: const Icon(Icons.refresh),
                           label: const Text("Riprova"),
                         ),
+                        const SizedBox(height: 16),
+                        Text(_imageData!.$2 ?? "Nessuna etichetta suggerita"),
                       ],
-                    )
+                    ),
                   ],
           ),
           const SizedBox(height: 32.0),
@@ -134,7 +138,7 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
                 // creates a new word with the given content and adds all the corresponding images
                 final newWord = Word(
                   _wordController.text.capitalized,
-                  image: _image,
+                  image: _imageData!.$1,
                 );
 
                 provider.add(newWord);

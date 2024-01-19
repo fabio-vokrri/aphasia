@@ -17,7 +17,7 @@ class ChangeProfilePictureDialog extends StatefulWidget {
 
 class _ChangeProfilePictureDialogState
     extends State<ChangeProfilePictureDialog> {
-  Uint8List? _image;
+  (Uint8List? content, String? label)? _imageData;
 
   @override
   Widget build(BuildContext context) {
@@ -31,11 +31,11 @@ class _ChangeProfilePictureDialogState
         padding: const EdgeInsets.symmetric(vertical: 16.0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: _image == null
+          children: _imageData == null
               ? [
                   ImageLoaderCard(
                     onTap: () async {
-                      _image = await ImageService.pickImageFrom(
+                      _imageData = await ImageService.pickImageFrom(
                         ImageSource.gallery,
                       );
 
@@ -46,7 +46,7 @@ class _ChangeProfilePictureDialogState
                   const SizedBox(width: 16),
                   ImageLoaderCard(
                     onTap: () async {
-                      _image = await ImageService.pickImageFrom(
+                      _imageData = await ImageService.pickImageFrom(
                         ImageSource.camera,
                       );
 
@@ -56,7 +56,7 @@ class _ChangeProfilePictureDialogState
                   ),
                 ]
               : [
-                  ImageLoaderCard(imageBytes: _image),
+                  ImageLoaderCard(imageBytes: _imageData!.$1),
                   const SizedBox(width: 32),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -66,7 +66,7 @@ class _ChangeProfilePictureDialogState
                       const SizedBox(height: 16),
                       FilledButton.icon(
                         onPressed: () {
-                          _image = null;
+                          _imageData = null;
                           setState(() {});
                         },
                         icon: const Icon(Icons.refresh),
@@ -88,8 +88,8 @@ class _ChangeProfilePictureDialogState
             foregroundColor: theme.colorScheme.onPrimary,
           ),
           onPressed: () {
-            if (_image != null) {
-              userProvider.updateImage(_image);
+            if (_imageData != null) {
+              userProvider.updateImage(_imageData!.$1);
             }
             Navigator.pop(context);
           },
