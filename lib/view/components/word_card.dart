@@ -1,7 +1,7 @@
 import 'package:aphasia/model/word.dart';
+import 'package:aphasia/providers/edit_mode_provider.dart';
 import 'package:aphasia/providers/tts_provider.dart';
 import 'package:aphasia/providers/word_provider.dart';
-import 'package:aphasia/view/components/delete_dialog.dart';
 import 'package:aphasia/view/components/word_label.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -13,16 +13,17 @@ class WordCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<WordProvider>(context);
+    final wordProvider = Provider.of<WordProvider>(context);
+    final editModeProvider = Provider.of<EditModeProvider>(context);
     final theme = Theme.of(context);
 
     return GestureDetector(
-      onTap: () => TTSProvider.speak(word.content),
-      onLongPress: () {
-        showDialog(
-          context: context,
-          builder: (context) => DeleteDialog(word: word),
-        );
+      onTap: () {
+        if (!editModeProvider.isEditMode) {
+          TTSProvider.speak(word.content);
+        } else {
+          wordProvider.toggleSelected(word);
+        }
       },
       child: ClipRRect(
         borderRadius: BorderRadius.circular(16.0),
@@ -43,15 +44,30 @@ class WordCard extends StatelessWidget {
                 alignment: Alignment.topRight,
                 child: IconButton.filled(
                   style: IconButton.styleFrom(
+                    backgroundColor: theme.colorScheme.primary,
                     foregroundColor: theme.colorScheme.onPrimary,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  onPressed: () => provider.toggleFavourite(word),
-                  icon: Icon(
-                    word.isFavourite ? Icons.favorite : Icons.favorite_border,
-                  ),
+                  onPressed: () {
+                    if (editModeProvider.isEditMode) {
+                      wordProvider.toggleSelected(word);
+                    } else {
+                      wordProvider.toggleFavourite(word);
+                    }
+                  },
+                  icon: editModeProvider.isEditMode
+                      ? Icon(
+                          word.isSelected
+                              ? Icons.circle
+                              : Icons.circle_outlined,
+                        )
+                      : Icon(
+                          word.isFavourite
+                              ? Icons.favorite
+                              : Icons.favorite_border,
+                        ),
                 ),
               ),
               Align(

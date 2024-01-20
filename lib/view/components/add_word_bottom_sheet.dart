@@ -5,7 +5,7 @@ import 'package:aphasia/model/word.dart';
 import 'package:aphasia/providers/image_service.dart';
 import 'package:aphasia/providers/tts_provider.dart';
 import 'package:aphasia/providers/word_provider.dart';
-import 'package:aphasia/view/components/image_loader_card.dart';
+import 'package:aphasia/view/components/image_picker_card.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
@@ -24,7 +24,7 @@ class _AddWordBottomSheetState extends State<AddWordBottomSheet> {
   final _wordController = TextEditingController();
   final _focusNode = FocusNode();
 
-  (Uint8List? content, String? label)? _imageData;
+  Uint8List? _imageData;
 
   @override
   void dispose() {
@@ -77,52 +77,40 @@ class _AddWordBottomSheetState extends State<AddWordBottomSheet> {
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
-            children: _imageData == null
-                ? [
-                    ImageLoaderCard(
-                      onTap: () async {
-                        _imageData = await ImageService.pickImageFrom(
-                          ImageSource.gallery,
-                        );
+            children: [
+              ImagePickerCard(
+                onTap: () async {
+                  if (_imageData == null) {
+                    _imageData = await ImageService.pickImageFrom(
+                      ImageSource.gallery,
+                    );
 
-                        setState(() {});
-                      },
-                      icon: Icons.collections_rounded,
-                    ),
-                    const SizedBox(width: 16),
-                    ImageLoaderCard(
-                      onTap: () async {
-                        _imageData = await ImageService.pickImageFrom(
-                          ImageSource.camera,
-                        );
+                    setState(() {});
+                  }
+                },
+                icon: _imageData == null ? Icons.collections_rounded : null,
+                imageBytes: _imageData,
+              ),
+              const SizedBox(width: 16),
+              ImagePickerCard(
+                onTap: () async {
+                  // if the image has not been selected yet open the image picker,
+                  // else discard the choice.
+                  if (_imageData == null) {
+                    _imageData = await ImageService.pickImageFrom(
+                      ImageSource.camera,
+                    );
+                  } else {
+                    _imageData = null;
+                  }
 
-                        setState(() {});
-                      },
-                      icon: Icons.add_a_photo_rounded,
-                    ),
-                  ]
-                : [
-                    ImageLoaderCard(imageBytes: _imageData!.$1),
-                    const SizedBox(width: 32),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Text("Non ti piace?"),
-                        const SizedBox(height: 16),
-                        FilledButton.icon(
-                          onPressed: () {
-                            _imageData = null;
-                            setState(() {});
-                          },
-                          icon: const Icon(Icons.refresh),
-                          label: const Text("Riprova"),
-                        ),
-                        const SizedBox(height: 16),
-                        Text(_imageData!.$2 ?? "Nessuna etichetta suggerita"),
-                      ],
-                    ),
-                  ],
+                  setState(() {});
+                },
+                icon: _imageData == null
+                    ? Icons.add_a_photo_rounded
+                    : Icons.refresh,
+              ),
+            ],
           ),
           const SizedBox(height: 32.0),
           Align(
@@ -138,7 +126,7 @@ class _AddWordBottomSheetState extends State<AddWordBottomSheet> {
                 // creates a new word with the given content and adds all the corresponding images
                 final newWord = Word(
                   _wordController.text.capitalized,
-                  image: _imageData!.$1,
+                  image: _imageData,
                 );
 
                 provider.add(newWord);

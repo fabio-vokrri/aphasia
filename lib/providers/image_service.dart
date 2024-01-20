@@ -7,7 +7,7 @@ class ImageService {
   static const double _goldenRatio = 1.61803398875;
 
   /// picks an image from the given `source`.
-  static Future<(Uint8List?, String?)?> pickImageFrom(
+  static Future<Uint8List?> pickImageFrom(
     ImageSource source, {
     double? height = 1000,
     double? width,
@@ -21,10 +21,7 @@ class ImageService {
 
       if (image == null) return null;
 
-      return (
-        await image.readAsBytes(),
-        source == ImageSource.camera ? await _getImageLabel(image) : null,
-      );
+      return await image.readAsBytes();
     } on PlatformException catch (e) {
       debugPrint(e.message);
     }

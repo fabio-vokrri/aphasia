@@ -1,3 +1,4 @@
+import 'package:aphasia/providers/edit_mode_provider.dart';
 import 'package:aphasia/providers/tts_provider.dart';
 import 'package:aphasia/providers/user_provider.dart';
 import 'package:aphasia/providers/word_provider.dart';
@@ -32,12 +33,17 @@ class Aphasia extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (context) => WordProvider()),
         ChangeNotifierProvider(create: (context) => UserProvider()),
+        ChangeNotifierProvider(create: (context) => EditModeProvider()),
       ],
-      child: MaterialApp(
-        title: "Aphasia",
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(colorSchemeSeed: Colors.blue),
-        home: const HomePage(),
+      child: Consumer<EditModeProvider>(
+        builder: (BuildContext context, EditModeProvider value, Widget? child) {
+          return MaterialApp(
+            title: "Aphasia",
+            debugShowCheckedModeBanner: false,
+            theme: ThemeData(colorSchemeSeed: value.getColor),
+            home: const HomePage(),
+          );
+        },
       ),
     );
   }

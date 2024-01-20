@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 enum WordFilter {
   all,
   favourites,
+  toBeDeleted,
 }
 
 /// Provider class for the words saved by the user
@@ -58,9 +59,24 @@ class WordProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Adds the given `word` in the bin, in order to be deleted.
+  void toggleSelected(Word word) {
+    word.toggleSelected();
+    notifyListeners();
+  }
+
+  void deleteBin() async {
+    List<Word> toBeDeleted = filter(WordFilter.toBeDeleted);
+
+    for (Word word in toBeDeleted) {
+      delete(word);
+    }
+  }
+
   /// Filters the words based on the given `filter`.
   UnmodifiableListView<Word> filter(WordFilter filter) {
     return switch (filter) {
+      WordFilter.toBeDeleted => _getToBeDeletedWords,
       WordFilter.favourites => _getFavouriteWords,
       WordFilter.all => _getAllWords,
     };
@@ -72,6 +88,10 @@ class WordProvider extends ChangeNotifier {
 
   UnmodifiableListView<Word> get _getFavouriteWords {
     return UnmodifiableListView(_words.where((Word word) => word.isFavourite));
+  }
+
+  UnmodifiableListView<Word> get _getToBeDeletedWords {
+    return UnmodifiableListView(_words.where((Word word) => word.isSelected));
   }
 
   int get getLength => _words.length;

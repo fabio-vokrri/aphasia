@@ -2,8 +2,8 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 
-class ImageLoaderCard extends StatelessWidget {
-  const ImageLoaderCard({
+class ImagePickerCard extends StatelessWidget {
+  const ImagePickerCard({
     super.key,
     this.onTap,
     this.imageBytes,
