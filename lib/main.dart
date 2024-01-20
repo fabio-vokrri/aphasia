@@ -2,7 +2,7 @@ import 'package:aphasia/providers/edit_mode_provider.dart';
 import 'package:aphasia/providers/tts_provider.dart';
 import 'package:aphasia/providers/user_provider.dart';
 import 'package:aphasia/providers/word_provider.dart';
-import 'package:aphasia/view/pages/home.dart';
+import 'package:aphasia/view/pages/welcome.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -41,7 +41,7 @@ class Aphasia extends StatelessWidget {
             title: "Aphasia",
             debugShowCheckedModeBanner: false,
             theme: ThemeData(colorSchemeSeed: value.getColor),
-            home: const HomePage(),
+            home: const WelcomePage(),
           );
         },
       ),

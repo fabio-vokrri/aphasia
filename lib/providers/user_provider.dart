@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:aphasia/db/user_db.dart';
 import 'package:aphasia/model/user.dart';
 import 'package:flutter/material.dart';
@@ -20,11 +18,6 @@ class UserProvider extends ChangeNotifier {
 
   Future<void> updateName(String name) async {
     _user = _user.copyWith(name: name);
-    await _update();
-  }
-
-  Future<void> updateImage(Uint8List? image) async {
-    _user = _user.copyWith(image: image);
     await _update();
   }
 

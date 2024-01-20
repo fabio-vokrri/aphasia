@@ -59,9 +59,7 @@ class WordCard extends StatelessWidget {
                   },
                   icon: editModeProvider.isEditMode
                       ? Icon(
-                          word.isSelected
-                              ? Icons.circle
-                              : Icons.circle_outlined,
+                          word.isSelected ? Icons.delete : Icons.delete_outline,
                         )
                       : Icon(
                           word.isFavourite

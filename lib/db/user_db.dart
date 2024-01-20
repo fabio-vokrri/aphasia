@@ -23,8 +23,7 @@ class UserDatabaseService {
       """
         CREATE TABLE $_dbName(
           id TEXT PRIMARY KEY NOT NULL,
-          name TEXT NOT NULL, 
-          image BLOB
+          name TEXT NOT NULL
         )
       """,
     );

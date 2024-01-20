@@ -4,42 +4,24 @@ import 'package:uuid/uuid.dart';
 
 class User {
   final String _name;
-  final Uint8List? _image;
   final String? _id;
 
-  User({
-    required String name,
-    String? id,
-    Uint8List? image,
-  })  : _name = name,
-        _id = id ?? const Uuid().v8(),
-        _image = image;
+  User({required String name, String? id})
+      : _name = name,
+        _id = id ?? const Uuid().v8();
 
   String get name => _name;
-  Uint8List? get image => _image;
   String get id => _id!;
 
   Map<String, dynamic> toMap() {
-    return {
-      "name": _name,
-      "id": _id,
-      "image": _image,
-    };
+    return {"name": _name, "id": _id};
   }
 
   factory User.fromMap(Map<String, dynamic> map) {
-    return User(
-      name: map["name"],
-      id: map["id"],
-      image: map["image"],
-    );
+    return User(name: map["name"], id: map["id"]);
   }
 
   User copyWith({String? name, Uint8List? image}) {
-    return User(
-      name: name ?? _name,
-      image: image ?? _image,
-      id: _id!,
-    );
+    return User(name: name ?? _name, id: _id!);
   }
 }

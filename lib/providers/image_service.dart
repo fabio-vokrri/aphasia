@@ -1,22 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_mlkit_image_labeling/google_mlkit_image_labeling.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ImageService {
   static const double _goldenRatio = 1.61803398875;
+  static const double _height = 1000;
 
   /// picks an image from the given `source`.
-  static Future<Uint8List?> pickImageFrom(
-    ImageSource source, {
-    double? height = 1000,
-    double? width,
-  }) async {
+  static Future<Uint8List?> pickImageFrom(ImageSource source) async {
     try {
       final image = await ImagePicker().pickImage(
         source: source,
-        maxHeight: height,
-        maxWidth: width ?? height! / (_goldenRatio - 1),
+        maxHeight: _height,
+        maxWidth: _height / (_goldenRatio - 1),
       );
 
       if (image == null) return null;
@@ -26,13 +22,5 @@ class ImageService {
       debugPrint(e.message);
     }
     return null;
-  }
-
-  static Future<String> _getImageLabel(XFile image) async {
-    final inputImage = InputImage.fromFilePath(image.path);
-    ImageLabeler imageLabeler = ImageLabeler(options: ImageLabelerOptions());
-    List<ImageLabel> labels = await imageLabeler.processImage(inputImage);
-
-    return labels.first.label;
   }
 }

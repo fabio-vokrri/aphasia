@@ -1,9 +1,10 @@
 import 'package:aphasia/db/words_db.dart';
 import 'package:aphasia/providers/edit_mode_provider.dart';
+import 'package:aphasia/providers/user_provider.dart';
 import 'package:aphasia/providers/word_provider.dart';
 import 'package:aphasia/view/components/add_word_bottom_sheet.dart';
-import 'package:aphasia/view/components/custom_drawer.dart';
 import 'package:aphasia/view/components/delete_dialog.dart';
+import 'package:aphasia/view/components/no_selected_words_dialog.dart';
 import 'package:aphasia/view/components/word_card.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -29,15 +30,25 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     final wordProvider = Provider.of<WordProvider>(context);
     final editModeProvider = Provider.of<EditModeProvider>(context);
+    final userProvider = Provider.of<UserProvider>(context);
     final theme = Theme.of(context);
 
     const double goldenRatio = 1.61803398875;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          editModeProvider.isEditMode ? "Modalità modifica" : "Aphasia",
-        ),
+        title: FutureBuilder(
+            future: userProvider.isInitCompleted,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Text("Aphasia");
+              }
+              return Text(
+                editModeProvider.isEditMode
+                    ? "Modalità Modifica"
+                    : "Ciao ${userProvider.user.name}!",
+              );
+            }),
         actions: [
           IconButton(
             onPressed: editModeProvider.toggleEditMode,
@@ -79,8 +90,6 @@ class _HomePageState extends State<HomePage> {
                 );
         },
       ),
-      drawer: const CustomDrawer(),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: FloatingActionButton(
         tooltip: editModeProvider.isEditMode
             ? "Rimuovi selezionati"
@@ -93,19 +102,7 @@ class _HomePageState extends State<HomePage> {
               context: context,
               builder: (context) {
                 if (wordProvider.filter(WordFilter.toBeDeleted).isEmpty) {
-                  return AlertDialog(
-                    icon: const Icon(Icons.warning),
-                    title: const Text("Nessuna parola selezionata"),
-                    content: const Text(
-                      "Prima di procedere, seleziona le parole da eliminare",
-                    ),
-                    actions: [
-                      ElevatedButton(
-                        onPressed: () => Navigator.pop(context),
-                        child: const Text("OK"),
-                      ),
-                    ],
-                  );
+                  return const NoSelectedWordsDialog();
                 }
                 return const DeleteDialog();
               },
@@ -125,16 +122,22 @@ class _HomePageState extends State<HomePage> {
       bottomNavigationBar: NavigationBar(
         selectedIndex: _currentIndex,
         onDestinationSelected: (int index) {
-          editModeProvider.exitEditMode();
-
           setState(() {
             _currentIndex = index;
             _filter = WordFilter.values[_currentIndex];
           });
         },
         destinations: const [
-          NavigationDestination(icon: Icon(Icons.home), label: "Tutte"),
-          NavigationDestination(icon: Icon(Icons.favorite), label: "Preferite"),
+          NavigationDestination(
+            icon: Icon(Icons.home_outlined),
+            selectedIcon: Icon(Icons.home),
+            label: "Tutte",
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.favorite_border),
+            selectedIcon: Icon(Icons.favorite),
+            label: "Preferite",
+          ),
         ],
       ),
     );
