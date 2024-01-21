@@ -4,18 +4,18 @@ import 'package:flutter/services.dart';
 class TTSProvider {
   static const _platform = MethodChannel("tts_service");
 
-  static void init() {
+  static Future<void> init() async {
     try {
-      _platform.invokeMethod("init");
+      await _platform.invokeMethod("init");
     } on PlatformException catch (e) {
       debugPrint(e.message);
     }
   }
 
   /// Speaks out loud the given `word`.
-  static void speak(String word) {
+  static Future<void> speak(String word) async {
     try {
-      _platform.invokeMethod("speak", word);
+      await _platform.invokeMethod("speak", word);
     } on PlatformException catch (e) {
       debugPrint(e.message);
     }

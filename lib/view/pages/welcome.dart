@@ -1,9 +1,7 @@
 import 'package:aphasia/extensions/capitalize.dart';
-import 'package:aphasia/model/user.dart';
 import 'package:aphasia/providers/user_provider.dart';
 import 'package:aphasia/view/pages/home.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class WelcomePage extends StatefulWidget {
   const WelcomePage({super.key});
@@ -14,11 +12,6 @@ class WelcomePage extends StatefulWidget {
 
 class _WelcomePageState extends State<WelcomePage> {
   final PageController _pageController = PageController();
-
-  final _pages = [
-    const FirstWelcomePage(),
-    const SecondWelcomePage(),
-  ];
 
   @override
   void dispose() {
@@ -31,9 +24,15 @@ class _WelcomePageState extends State<WelcomePage> {
     final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: theme.primaryColor,
       extendBody: true,
-      body: PageView(controller: _pageController, children: _pages),
+      backgroundColor: theme.colorScheme.primary,
+      body: PageView(
+        controller: _pageController,
+        children: const [
+          FirstWelcomePage(),
+          SecondWelcomePage(),
+        ],
+      ),
     );
   }
 }
@@ -81,7 +80,6 @@ class SecondWelcomePage extends StatefulWidget {
 }
 
 class _SecondWelcomePageState extends State<SecondWelcomePage> {
-  final _key = GlobalKey<FormState>();
   final _focusNode = FocusNode();
   final _nameController = TextEditingController();
 
@@ -95,7 +93,6 @@ class _SecondWelcomePageState extends State<SecondWelcomePage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final userProvider = Provider.of<UserProvider>(context);
 
     return Padding(
       padding: const EdgeInsets.all(32.0),
@@ -111,43 +108,43 @@ class _SecondWelcomePageState extends State<SecondWelcomePage> {
             ),
           ),
           const SizedBox(height: 16),
-          Form(
-            key: _key,
-            child: TextFormField(
-              focusNode: _focusNode,
-              controller: _nameController,
-              validator: (String? value) {
-                if (value == null || value.isEmpty) {
-                  return "Inserisci il tuo nome";
-                }
+          TextFormField(
+            focusNode: _focusNode,
+            controller: _nameController,
+            validator: (String? value) {
+              if (value == null || value.isEmpty) {
+                return "Inserisci il tuo nome";
+              }
 
-                return null;
-              },
-              maxLength: 15,
-              style: theme.textTheme.bodyLarge!.copyWith(
+              return null;
+            },
+            maxLength: 15,
+            style: theme.textTheme.bodyLarge!.copyWith(
+              color: theme.colorScheme.onPrimary,
+            ),
+            cursorColor: theme.colorScheme.onPrimary,
+            decoration: InputDecoration(
+              border: OutlineInputBorder(
+                borderSide: BorderSide(color: theme.colorScheme.onPrimary),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: theme.colorScheme.onPrimary),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: theme.colorScheme.onPrimary),
+              ),
+              counterStyle: theme.textTheme.labelMedium!.copyWith(
                 color: theme.colorScheme.onPrimary,
               ),
-              cursorColor: theme.colorScheme.onPrimary,
-              decoration: InputDecoration(
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: theme.colorScheme.onPrimary),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: theme.colorScheme.onPrimary),
-                ),
-                counterStyle: theme.textTheme.labelMedium!.copyWith(
+              focusColor: theme.colorScheme.onPrimary,
+              prefixIconColor: theme.colorScheme.onPrimary,
+              label: Text(
+                "Inserisci il tuo nome",
+                style: theme.textTheme.bodyLarge!.copyWith(
                   color: theme.colorScheme.onPrimary,
                 ),
-                focusColor: theme.colorScheme.onPrimary,
-                prefixIconColor: theme.colorScheme.onPrimary,
-                label: Text(
-                  "Inserisci il tuo nome",
-                  style: theme.textTheme.bodyLarge!.copyWith(
-                    color: theme.colorScheme.onPrimary,
-                  ),
-                ),
-                prefixIcon: const Icon(Icons.person),
               ),
+              prefixIcon: const Icon(Icons.person),
             ),
           ),
           const SizedBox(height: 32),
@@ -156,7 +153,6 @@ class _SecondWelcomePageState extends State<SecondWelcomePage> {
             child: FloatingActionButton.extended(
               backgroundColor: theme.primaryColor,
               foregroundColor: theme.colorScheme.onPrimary,
-              elevation: 0,
               label: const Row(
                 children: [
                   Text("Incominciamo"),
@@ -165,12 +161,8 @@ class _SecondWelcomePageState extends State<SecondWelcomePage> {
                 ],
               ),
               onPressed: () {
-                if (!_key.currentState!.validate()) return;
-
-                final newUser = User(
-                  name: _nameController.text.capitalized,
-                );
-                userProvider.add(newUser);
+                if (_nameController.text.isEmpty) return;
+                UserProvider.setUserName(_nameController.text.capitalized);
 
                 Navigator.of(context).pushReplacement(
                   MaterialPageRoute(

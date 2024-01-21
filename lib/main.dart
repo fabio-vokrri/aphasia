@@ -8,11 +8,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
-void main(List<String> args) {
+void main(List<String> args) async {
   WidgetsFlutterBinding.ensureInitialized();
 
   SystemChrome.setSystemUIOverlayStyle(
-    const SystemUiOverlayStyle(systemNavigationBarColor: Colors.transparent),
+    const SystemUiOverlayStyle(
+      systemNavigationBarColor: Colors.transparent,
+      statusBarColor: Colors.transparent,
+    ),
   );
 
   SystemChrome.setPreferredOrientations([
@@ -21,12 +24,14 @@ void main(List<String> args) {
   ]);
 
   TTSProvider.init();
+  bool isNewUser = await UserProvider.isNewUser;
 
-  runApp(const Aphasia());
+  runApp(Aphasia(isNewUser: isNewUser));
 }
 
 class Aphasia extends StatelessWidget {
-  const Aphasia({super.key});
+  const Aphasia({super.key, required this.isNewUser});
+  final bool isNewUser;
 
   @override
   Widget build(BuildContext context) {
@@ -36,20 +41,17 @@ class Aphasia extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => UserProvider()),
         ChangeNotifierProvider(create: (context) => EditModeProvider()),
       ],
-      child: Consumer2<EditModeProvider, UserProvider>(
+      child: Consumer<EditModeProvider>(
         builder: (
           BuildContext context,
           EditModeProvider editModeProvider,
-          UserProvider userProvider,
           Widget? child,
         ) {
           return MaterialApp(
             title: "Aphasia",
             debugShowCheckedModeBanner: false,
             theme: ThemeData(colorSchemeSeed: editModeProvider.getColor),
-            home: userProvider.user == null
-                ? const WelcomePage()
-                : const HomePage(),
+            home: isNewUser ? const WelcomePage() : const HomePage(),
           );
         },
       ),

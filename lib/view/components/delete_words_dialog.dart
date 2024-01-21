@@ -3,8 +3,8 @@ import 'package:aphasia/providers/word_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class DeleteDialog extends StatelessWidget {
-  const DeleteDialog({super.key});
+class DeleteWordsDialog extends StatelessWidget {
+  const DeleteWordsDialog({super.key});
 
   @override
   Widget build(BuildContext context) {

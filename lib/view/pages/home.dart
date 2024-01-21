@@ -1,10 +1,9 @@
-import 'package:aphasia/db/user_db.dart';
 import 'package:aphasia/db/words_db.dart';
-import 'package:aphasia/model/user.dart';
 import 'package:aphasia/providers/edit_mode_provider.dart';
+import 'package:aphasia/providers/user_provider.dart';
 import 'package:aphasia/providers/word_provider.dart';
 import 'package:aphasia/view/components/add_word_bottom_sheet.dart';
-import 'package:aphasia/view/components/delete_dialog.dart';
+import 'package:aphasia/view/components/delete_words_dialog.dart';
 import 'package:aphasia/view/components/no_selected_words_dialog.dart';
 import 'package:aphasia/view/components/word_card.dart';
 import 'package:flutter/material.dart';
@@ -37,11 +36,8 @@ class _HomePageState extends State<HomePage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: FutureBuilder(
-            future: Future<User?>.delayed(
-              const Duration(seconds: 5),
-              () => UserDatabaseService().getUser,
-            ),
+        title: FutureBuilder<String?>(
+            future: UserProvider.getUserName,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Text("Aphasia");
@@ -50,7 +46,7 @@ class _HomePageState extends State<HomePage> {
               return Text(
                 editModeProvider.isEditMode
                     ? "Modalità Modifica"
-                    : "Ciao ${snapshot.data!.name}!",
+                    : "Ciao ${snapshot.data!}!",
               );
             }),
         actions: [
@@ -94,7 +90,11 @@ class _HomePageState extends State<HomePage> {
                 );
         },
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+      floatingActionButton: FloatingActionButton.extended(
+        label: editModeProvider.isEditMode
+            ? const Text("Elimina ")
+            : const Text("Aggiungi"),
         tooltip: editModeProvider.isEditMode
             ? "Rimuovi selezionati"
             : "Aggiungi nuova parola",
@@ -108,7 +108,7 @@ class _HomePageState extends State<HomePage> {
                 if (wordProvider.filter(WordFilter.toBeDeleted).isEmpty) {
                   return const NoSelectedWordsDialog();
                 }
-                return const DeleteDialog();
+                return const DeleteWordsDialog();
               },
             );
           } else {
@@ -121,7 +121,7 @@ class _HomePageState extends State<HomePage> {
             );
           }
         },
-        child: Icon(editModeProvider.isEditMode ? Icons.delete : Icons.add),
+        icon: Icon(editModeProvider.isEditMode ? Icons.delete : Icons.add),
       ),
       bottomNavigationBar: NavigationBar(
         selectedIndex: _currentIndex,
@@ -142,6 +142,7 @@ class _HomePageState extends State<HomePage> {
             selectedIcon: Icon(Icons.favorite),
             label: "Preferite",
           ),
+          Spacer(),
         ],
       ),
     );

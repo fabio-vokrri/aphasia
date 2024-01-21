@@ -1,37 +1,22 @@
-import 'package:aphasia/db/user_db.dart';
-import 'package:aphasia/model/user.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class UserProvider extends ChangeNotifier {
-  final UserDatabaseService _dataBaseService;
+  static const String _key = "userName";
+  static String? _userName;
 
-  User? _user;
+  static Future<String?> get getUserName async {
+    if (_userName != null) _userName;
 
-  UserProvider() : _dataBaseService = UserDatabaseService() {
-    init();
+    final preferences = await SharedPreferences.getInstance();
+    _userName = preferences.getString(_key);
+    return _userName;
   }
 
-  Future<void> init() async {
-    _user ??= await _dataBaseService.getUser;
+  static Future<void> setUserName(String newUserName) async {
+    final preferences = await SharedPreferences.getInstance();
+    await preferences.setString(_key, newUserName);
   }
 
-  Future<void> add(User user) async {
-    // if (_user != null) return;
-
-    await _dataBaseService.add(user);
-    notifyListeners();
-  }
-
-  Future<void> updateName(String name) async {
-    if (_user == null) {}
-    _user = _user!.copyWith(name: name);
-    await _update();
-  }
-
-  Future<void> _update() async {
-    await _dataBaseService.update(_user!);
-    notifyListeners();
-  }
-
-  User? get user => _user;
+  static Future<bool> get isNewUser async => await getUserName == null;
 }
