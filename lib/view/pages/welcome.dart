@@ -1,3 +1,5 @@
+import 'package:aphasia/extensions/capitalize.dart';
+import 'package:aphasia/model/user.dart';
 import 'package:aphasia/providers/user_provider.dart';
 import 'package:aphasia/view/pages/home.dart';
 import 'package:flutter/material.dart';
@@ -71,8 +73,24 @@ class FirstWelcomePage extends StatelessWidget {
   }
 }
 
-class SecondWelcomePage extends StatelessWidget {
+class SecondWelcomePage extends StatefulWidget {
   const SecondWelcomePage({super.key});
+
+  @override
+  State<SecondWelcomePage> createState() => _SecondWelcomePageState();
+}
+
+class _SecondWelcomePageState extends State<SecondWelcomePage> {
+  final _key = GlobalKey<FormState>();
+  final _focusNode = FocusNode();
+  final _nameController = TextEditingController();
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    _nameController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -88,40 +106,48 @@ class SecondWelcomePage extends StatelessWidget {
         children: [
           Text(
             "Prima di iniziare...",
-            style: theme.textTheme.titleLarge!
-                .copyWith(color: theme.colorScheme.onPrimary),
-          ),
-          const SizedBox(height: 16),
-          TextFormField(
-            onFieldSubmitted: (String value) {
-              if (value.isNotEmpty) {
-                userProvider.updateName(value);
-              }
-            },
-            maxLength: 15,
-            style: theme.textTheme.bodyLarge!.copyWith(
+            style: theme.textTheme.titleLarge!.copyWith(
               color: theme.colorScheme.onPrimary,
             ),
-            cursorColor: theme.colorScheme.onPrimary,
-            decoration: InputDecoration(
-              enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: theme.colorScheme.onPrimary),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: theme.colorScheme.onPrimary),
-              ),
-              counterStyle: theme.textTheme.labelMedium!.copyWith(
+          ),
+          const SizedBox(height: 16),
+          Form(
+            key: _key,
+            child: TextFormField(
+              focusNode: _focusNode,
+              controller: _nameController,
+              validator: (String? value) {
+                if (value == null || value.isEmpty) {
+                  return "Inserisci il tuo nome";
+                }
+
+                return null;
+              },
+              maxLength: 15,
+              style: theme.textTheme.bodyLarge!.copyWith(
                 color: theme.colorScheme.onPrimary,
               ),
-              focusColor: theme.colorScheme.onPrimary,
-              prefixIconColor: theme.colorScheme.onPrimary,
-              label: Text(
-                "Inserisci il tuo nome",
-                style: theme.textTheme.bodyLarge!.copyWith(
+              cursorColor: theme.colorScheme.onPrimary,
+              decoration: InputDecoration(
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: theme.colorScheme.onPrimary),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: theme.colorScheme.onPrimary),
+                ),
+                counterStyle: theme.textTheme.labelMedium!.copyWith(
                   color: theme.colorScheme.onPrimary,
                 ),
+                focusColor: theme.colorScheme.onPrimary,
+                prefixIconColor: theme.colorScheme.onPrimary,
+                label: Text(
+                  "Inserisci il tuo nome",
+                  style: theme.textTheme.bodyLarge!.copyWith(
+                    color: theme.colorScheme.onPrimary,
+                  ),
+                ),
+                prefixIcon: const Icon(Icons.person),
               ),
-              prefixIcon: const Icon(Icons.person),
             ),
           ),
           const SizedBox(height: 32),
@@ -139,6 +165,13 @@ class SecondWelcomePage extends StatelessWidget {
                 ],
               ),
               onPressed: () {
+                if (!_key.currentState!.validate()) return;
+
+                final newUser = User(
+                  name: _nameController.text.capitalized,
+                );
+                userProvider.add(newUser);
+
                 Navigator.of(context).pushReplacement(
                   MaterialPageRoute(
                     builder: (context) => const HomePage(),

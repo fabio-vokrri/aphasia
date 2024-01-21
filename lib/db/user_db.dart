@@ -14,12 +14,9 @@ class UserDatabaseService {
   /// the reference to the database
   static Database? _database;
 
-  /// Initializes the database with the tables used to store the words data.
+  /// Initializes the database with the tables used to store the user data.
   Future<void> _init(Database db) async {
-    final batch = db.batch();
-    // the content of a word is unique!
-    // here it's used as a primary key
-    batch.execute(
+    await db.execute(
       """
         CREATE TABLE $_dbName(
           id TEXT PRIMARY KEY NOT NULL,
@@ -27,11 +24,6 @@ class UserDatabaseService {
         )
       """,
     );
-
-    // inserts a welcome word into the database on first creation
-    batch.insert(_dbName, User(name: "Utente").toMap());
-
-    await batch.commit();
   }
 
   /// gets the instance of the opened database
@@ -50,7 +42,21 @@ class UserDatabaseService {
     return _database!;
   }
 
-  /// Updates the given `word` with new data.
+  /// Adds the given `user` to the database.
+  ///
+  /// Can be called once. All future calls will be ignored.
+  Future<void> add(User user) async {
+    if (await getUser != null) return;
+
+    final db = await _databaseService.getInstance;
+    await db.insert(
+      _dbName,
+      user.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
+  /// Updates the given `user` with new data.
   Future<void> update(User user) async {
     final db = await _databaseService.getInstance;
 
@@ -62,15 +68,19 @@ class UserDatabaseService {
     );
   }
 
-  /// Gets all the database entries.
-  Future<User> get getUser async {
+  /// Gets the user from the database.
+  Future<User?> get getUser async {
     final db = await _databaseService.getInstance;
 
     final query = await db.query(_dbName);
+
+    // if no user has been found, return null
+    if (query.isEmpty) return null;
+    // else create a new instance of the user.
     return User.fromMap(query.first);
   }
 
-  /// Closes this database
+  /// Closes this database.
   static Future<void> close() async {
     final db = await _databaseService.getInstance;
     await db.close();

@@ -29,6 +29,7 @@ class _AddWordBottomSheetState extends State<AddWordBottomSheet> {
   @override
   void dispose() {
     _wordController.dispose();
+    _focusNode.dispose();
     super.dispose();
   }
 

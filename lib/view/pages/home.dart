@@ -1,6 +1,7 @@
+import 'package:aphasia/db/user_db.dart';
 import 'package:aphasia/db/words_db.dart';
+import 'package:aphasia/model/user.dart';
 import 'package:aphasia/providers/edit_mode_provider.dart';
-import 'package:aphasia/providers/user_provider.dart';
 import 'package:aphasia/providers/word_provider.dart';
 import 'package:aphasia/view/components/add_word_bottom_sheet.dart';
 import 'package:aphasia/view/components/delete_dialog.dart';
@@ -30,7 +31,6 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     final wordProvider = Provider.of<WordProvider>(context);
     final editModeProvider = Provider.of<EditModeProvider>(context);
-    final userProvider = Provider.of<UserProvider>(context);
     final theme = Theme.of(context);
 
     const double goldenRatio = 1.61803398875;
@@ -38,15 +38,19 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         title: FutureBuilder(
-            future: userProvider.isInitCompleted,
+            future: Future<User?>.delayed(
+              const Duration(seconds: 5),
+              () => UserDatabaseService().getUser,
+            ),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Text("Aphasia");
               }
+
               return Text(
                 editModeProvider.isEditMode
                     ? "Modalità Modifica"
-                    : "Ciao ${userProvider.user.name}!",
+                    : "Ciao ${snapshot.data!.name}!",
               );
             }),
         actions: [

@@ -3,28 +3,35 @@ import 'package:aphasia/model/user.dart';
 import 'package:flutter/material.dart';
 
 class UserProvider extends ChangeNotifier {
-  Future? isInitCompleted;
   final UserDatabaseService _dataBaseService;
 
-  late User _user;
+  User? _user;
 
   UserProvider() : _dataBaseService = UserDatabaseService() {
-    isInitCompleted = init();
+    init();
   }
 
   Future<void> init() async {
-    _user = await _dataBaseService.getUser;
+    _user ??= await _dataBaseService.getUser;
+  }
+
+  Future<void> add(User user) async {
+    // if (_user != null) return;
+
+    await _dataBaseService.add(user);
+    notifyListeners();
   }
 
   Future<void> updateName(String name) async {
-    _user = _user.copyWith(name: name);
+    if (_user == null) {}
+    _user = _user!.copyWith(name: name);
     await _update();
   }
 
   Future<void> _update() async {
-    await _dataBaseService.update(_user);
+    await _dataBaseService.update(_user!);
     notifyListeners();
   }
 
-  User get user => _user;
+  User? get user => _user;
 }
