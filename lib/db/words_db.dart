@@ -25,6 +25,7 @@ class WordsDatabaseService {
         CREATE TABLE $_dbName(
           id TEXT PRIMARY KEY NOT NULL, 
           isFavourite INTEGER NOT NULL,
+          counter INTEGER NOT NULL,
           image BLOB
         )
       """,
@@ -100,12 +101,10 @@ class WordsDatabaseService {
 
     final List<Map<String, dynamic>> query = await db.query(_dbName);
 
-    final List<Word> result = List.generate(
+    return List.generate(
       query.length,
       (index) => Word.fromMap(query[index]),
     );
-
-    return result;
   }
 
   /// Closes this database

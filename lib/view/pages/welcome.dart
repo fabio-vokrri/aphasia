@@ -28,9 +28,17 @@ class _WelcomePageState extends State<WelcomePage> {
       backgroundColor: theme.colorScheme.primary,
       body: PageView(
         controller: _pageController,
-        children: const [
-          FirstWelcomePage(),
-          SecondWelcomePage(),
+        children: [
+          GestureDetector(
+            onTap: () {
+              _pageController.nextPage(
+                duration: const Duration(milliseconds: 500),
+                curve: Curves.easeOutExpo,
+              );
+            },
+            child: const FirstWelcomePage(),
+          ),
+          const SecondWelcomePage(),
         ],
       ),
     );
@@ -48,7 +56,13 @@ class FirstWelcomePage extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Placeholder(color: Colors.white10),
+          SizedBox.square(
+            dimension: MediaQuery.of(context).size.width / 2,
+            child: Image.asset(
+              "assets/logo.png",
+              color: theme.colorScheme.onPrimary,
+            ),
+          ),
           const SizedBox(height: 32.0),
           Text(
             "Benvenuto ad Aphasia",

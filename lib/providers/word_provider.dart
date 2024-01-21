@@ -5,9 +5,36 @@ import 'package:aphasia/model/word.dart';
 import 'package:flutter/material.dart';
 
 enum WordFilter {
-  all,
-  favourites,
-  toBeDeleted,
+  all(
+    label: "Tutte",
+    icon: Icon(Icons.home_outlined),
+    activeIcon: Icon(Icons.home),
+  ),
+  favourites(
+    label: "Preferite",
+    icon: Icon(Icons.favorite_border),
+    activeIcon: Icon(Icons.favorite),
+  ),
+  // mostUsed(
+  //   label: "Più Usate",
+  //   icon: Icon(Icons.star_border),
+  //   activeIcon: Icon(Icons.star),
+  // ),
+  toBeDeleted(
+    label: "Da eliminare",
+    icon: Icon(Icons.delete_outline),
+    activeIcon: Icon(Icons.delete),
+  );
+
+  final String label;
+  final Icon icon;
+  final Icon activeIcon;
+
+  const WordFilter({
+    required this.label,
+    required this.icon,
+    required this.activeIcon,
+  });
 }
 
 /// Provider class for the words saved by the user
@@ -78,6 +105,7 @@ class WordProvider extends ChangeNotifier {
     return switch (filter) {
       WordFilter.toBeDeleted => _getToBeDeletedWords,
       WordFilter.favourites => _getFavouriteWords,
+      // WordFilter.mostUsed => _getMostUsed,
       WordFilter.all => _getAllWords,
     };
   }
@@ -85,6 +113,11 @@ class WordProvider extends ChangeNotifier {
   UnmodifiableListView<Word> get _getAllWords {
     return UnmodifiableListView(_words);
   }
+
+  // UnmodifiableListView<Word> get _getMostUsed {
+  //   _words.sort((a, b) => a.counter.compareTo(b.counter));
+  //   return UnmodifiableListView(_words.take(10));
+  // }
 
   UnmodifiableListView<Word> get _getFavouriteWords {
     return UnmodifiableListView(_words.where((Word word) => word.isFavourite));

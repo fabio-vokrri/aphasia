@@ -24,8 +24,8 @@ void main(List<String> args) async {
   ]);
 
   TTSProvider.init();
-  bool isNewUser = await UserProvider.isNewUser;
-
+  await UserProvider.init();
+  bool isNewUser = UserProvider.isNewUser;
   runApp(Aphasia(isNewUser: isNewUser));
 }
 

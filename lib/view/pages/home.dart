@@ -36,19 +36,11 @@ class _HomePageState extends State<HomePage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: FutureBuilder<String?>(
-            future: UserProvider.getUserName,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Text("Aphasia");
-              }
-
-              return Text(
-                editModeProvider.isEditMode
-                    ? "Modalità Modifica"
-                    : "Ciao ${snapshot.data!}!",
-              );
-            }),
+        title: Text(
+          editModeProvider.isEditMode
+              ? "Modalità Modifica"
+              : "Ciao ${UserProvider.getUserName}!",
+        ),
         actions: [
           IconButton(
             onPressed: editModeProvider.toggleEditMode,
@@ -92,9 +84,7 @@ class _HomePageState extends State<HomePage> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
       floatingActionButton: FloatingActionButton.extended(
-        label: editModeProvider.isEditMode
-            ? const Text("Elimina ")
-            : const Text("Aggiungi"),
+        label: Text(editModeProvider.isEditMode ? "Elimina " : "Aggiungi"),
         tooltip: editModeProvider.isEditMode
             ? "Rimuovi selezionati"
             : "Aggiungi nuova parola",
@@ -131,18 +121,15 @@ class _HomePageState extends State<HomePage> {
             _filter = WordFilter.values[_currentIndex];
           });
         },
-        destinations: const [
-          NavigationDestination(
-            icon: Icon(Icons.home_outlined),
-            selectedIcon: Icon(Icons.home),
-            label: "Tutte",
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.favorite_border),
-            selectedIcon: Icon(Icons.favorite),
-            label: "Preferite",
-          ),
-          Spacer(),
+        destinations: [
+          ...WordFilter.values.map((filter) {
+            return NavigationDestination(
+              icon: filter.icon,
+              label: filter.label,
+              selectedIcon: filter.activeIcon,
+            );
+          }).take(2),
+          const Spacer(),
         ],
       ),
     );
