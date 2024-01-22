@@ -1,12 +1,13 @@
-import 'dart:typed_data';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ImagePickerCard extends StatelessWidget {
   const ImagePickerCard({
     super.key,
     this.onTap,
-    this.imageBytes,
+    this.image,
     this.icon,
     this.content,
   });
@@ -14,7 +15,7 @@ class ImagePickerCard extends StatelessWidget {
   final void Function()? onTap;
   final IconData? icon;
   final String? content;
-  final Uint8List? imageBytes;
+  final XFile? image;
 
   @override
   Widget build(BuildContext context) {
@@ -29,9 +30,11 @@ class ImagePickerCard extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16.0),
           color: theme.colorScheme.primary,
-          image: imageBytes != null
+          image: image != null
               ? DecorationImage(
-                  image: MemoryImage(imageBytes!), fit: BoxFit.cover)
+                  image: FileImage(File(image!.path)),
+                  fit: BoxFit.cover,
+                )
               : null,
         ),
         child: icon != null

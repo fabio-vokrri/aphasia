@@ -43,19 +43,8 @@ class Word {
   bool get isFavourite => _isFavourite;
   bool get isSelected => _isSelected;
 
-  void incrementCounter() {
-    _counter++;
-  }
-
-  Uint8List? get image {
-    return _image;
-  }
-
-  void toggleFavourite() {
-    _isFavourite = !_isFavourite;
-  }
-
-  void toggleSelected() {
-    _isSelected = !_isSelected;
-  }
+  Uint8List? get image => _image;
+  void incrementCounter() => _counter++;
+  void toggleFavourite() => _isFavourite = !_isFavourite;
+  void toggleSelected() => _isSelected = !_isSelected;
 }

@@ -31,16 +31,15 @@ class WordsDatabaseService {
       """,
     );
 
+    final image = (await rootBundle.load("assets/welcome_image.jpg"))
+        .buffer
+        .asUint8List();
+
     // inserts a welcome word into the database on first creation
     batch.insert(
-        _dbName,
-        Word(
-          "Benvenuto!",
-          isFavourite: true,
-          image: (await rootBundle.load("assets/welcome_image.jpg"))
-              .buffer
-              .asUint8List(),
-        ).toMap());
+      _dbName,
+      Word("Benvenuto!", isFavourite: true, image: image).toMap(),
+    );
 
     await batch.commit();
   }

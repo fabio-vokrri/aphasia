@@ -1,4 +1,4 @@
-import 'dart:typed_data';
+import 'dart:io';
 
 import 'package:aphasia/extensions/capitalize.dart';
 import 'package:aphasia/model/word.dart';
@@ -24,13 +24,25 @@ class _AddWordBottomSheetState extends State<AddWordBottomSheet> {
   final _wordController = TextEditingController();
   final _focusNode = FocusNode();
 
-  Uint8List? _imageData;
+  XFile? _imageData;
 
   @override
   void dispose() {
     _wordController.dispose();
     _focusNode.dispose();
     super.dispose();
+  }
+
+  void _setImageLabel(XFile? image) async {
+    if (_imageData != null && _wordController.text.isEmpty) {
+      _wordController.text = await ImageService.getLabel(_imageData!);
+      setState(() {});
+    }
+  }
+
+  void _setImageFrom(ImageSource source) async {
+    _imageData = await ImageService.pickImageFrom(source);
+    setState(() {});
   }
 
   @override
@@ -82,15 +94,11 @@ class _AddWordBottomSheetState extends State<AddWordBottomSheet> {
               ImagePickerCard(
                 onTap: () async {
                   if (_imageData == null) {
-                    _imageData = await ImageService.pickImageFrom(
-                      ImageSource.gallery,
-                    );
-
-                    setState(() {});
+                    _setImageFrom(ImageSource.gallery);
                   }
                 },
                 icon: _imageData == null ? Icons.collections_rounded : null,
-                imageBytes: _imageData,
+                image: _imageData,
               ),
               const SizedBox(width: 16),
               ImagePickerCard(
@@ -98,14 +106,12 @@ class _AddWordBottomSheetState extends State<AddWordBottomSheet> {
                   // if the image has not been selected yet open the image picker,
                   // else discard the choice.
                   if (_imageData == null) {
-                    _imageData = await ImageService.pickImageFrom(
-                      ImageSource.camera,
-                    );
+                    _setImageFrom(ImageSource.camera);
+                    _setImageLabel(_imageData);
                   } else {
                     _imageData = null;
+                    setState(() {});
                   }
-
-                  setState(() {});
                 },
                 icon: _imageData == null
                     ? Icons.add_a_photo_rounded
@@ -127,7 +133,9 @@ class _AddWordBottomSheetState extends State<AddWordBottomSheet> {
                 // creates a new word with the given content and adds all the corresponding images
                 final newWord = Word(
                   _wordController.text.capitalized,
-                  image: _imageData,
+                  image: _imageData != null
+                      ? File(_imageData!.path).readAsBytesSync()
+                      : null,
                 );
 
                 provider.add(newWord);
