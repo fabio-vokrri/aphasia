@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:aphasia/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -24,11 +25,11 @@ class ImagePickerCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        height: 96,
-        width: 96,
-        margin: const EdgeInsets.symmetric(vertical: 8),
+        height: kBoxSize,
+        width: kBoxSize,
+        margin: const EdgeInsets.symmetric(vertical: kSmallSize),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16.0),
+          borderRadius: BorderRadius.circular(kMediumSize),
           color: theme.colorScheme.primary,
           image: image != null
               ? DecorationImage(

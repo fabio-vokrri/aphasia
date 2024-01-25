@@ -1,7 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class UserProvider extends ChangeNotifier {
+class UserProvider {
   static const String _key = "userName";
   static String? _userName;
 

@@ -1,3 +1,4 @@
+import 'package:aphasia/constants.dart';
 import 'package:aphasia/extensions/capitalize.dart';
 import 'package:aphasia/providers/user_provider.dart';
 import 'package:aphasia/view/pages/home.dart';
@@ -26,20 +27,22 @@ class _WelcomePageState extends State<WelcomePage> {
     return Scaffold(
       extendBody: true,
       backgroundColor: theme.colorScheme.primary,
-      body: PageView(
-        controller: _pageController,
-        children: [
-          GestureDetector(
-            onTap: () {
-              _pageController.nextPage(
-                duration: const Duration(milliseconds: 500),
-                curve: Curves.easeOutExpo,
-              );
-            },
-            child: const FirstWelcomePage(),
-          ),
-          const SecondWelcomePage(),
-        ],
+      body: Center(
+        child: PageView(
+          controller: _pageController,
+          children: [
+            GestureDetector(
+              onTap: () {
+                _pageController.nextPage(
+                  duration: const Duration(milliseconds: kDuration),
+                  curve: Curves.easeOutExpo,
+                );
+              },
+              child: const FirstWelcomePage(),
+            ),
+            const SecondWelcomePage(),
+          ],
+        ),
       ),
     );
   }
@@ -63,7 +66,7 @@ class FirstWelcomePage extends StatelessWidget {
               color: theme.colorScheme.onPrimary,
             ),
           ),
-          const SizedBox(height: 32.0),
+          const SizedBox(height: kMediumSize),
           Text(
             "Benvenuto ad Aphasia",
             textAlign: TextAlign.center,
@@ -72,7 +75,7 @@ class FirstWelcomePage extends StatelessWidget {
               fontWeight: FontWeight.w600,
             ),
           ),
-          const SizedBox(height: 8.0),
+          const SizedBox(height: kSmallSize),
           Text(
             "L'app che ti permette di parlare",
             style: theme.textTheme.titleLarge!.copyWith(
@@ -108,8 +111,12 @@ class _SecondWelcomePageState extends State<SecondWelcomePage> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
+    final formBorder = OutlineInputBorder(
+      borderSide: BorderSide(color: theme.colorScheme.onPrimary),
+    );
+
     return Padding(
-      padding: const EdgeInsets.all(32.0),
+      padding: const EdgeInsets.all(kLargeSize),
       child: Column(
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.center,
@@ -121,7 +128,7 @@ class _SecondWelcomePageState extends State<SecondWelcomePage> {
               color: theme.colorScheme.onPrimary,
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: kMediumSize),
           TextFormField(
             focusNode: _focusNode,
             controller: _nameController,
@@ -138,15 +145,9 @@ class _SecondWelcomePageState extends State<SecondWelcomePage> {
             ),
             cursorColor: theme.colorScheme.onPrimary,
             decoration: InputDecoration(
-              border: OutlineInputBorder(
-                borderSide: BorderSide(color: theme.colorScheme.onPrimary),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: theme.colorScheme.onPrimary),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: theme.colorScheme.onPrimary),
-              ),
+              border: formBorder,
+              enabledBorder: formBorder,
+              focusedBorder: formBorder,
               counterStyle: theme.textTheme.labelMedium!.copyWith(
                 color: theme.colorScheme.onPrimary,
               ),
@@ -161,7 +162,7 @@ class _SecondWelcomePageState extends State<SecondWelcomePage> {
               prefixIcon: const Icon(Icons.person),
             ),
           ),
-          const SizedBox(height: 32),
+          const SizedBox(height: kLargeSize),
           Align(
             alignment: Alignment.bottomRight,
             child: FloatingActionButton.extended(
@@ -170,7 +171,7 @@ class _SecondWelcomePageState extends State<SecondWelcomePage> {
               label: const Row(
                 children: [
                   Text("Incominciamo"),
-                  SizedBox(width: 8),
+                  SizedBox(width: kSmallSize),
                   Icon(Icons.arrow_forward_ios_rounded),
                 ],
               ),
@@ -179,9 +180,7 @@ class _SecondWelcomePageState extends State<SecondWelcomePage> {
                 UserProvider.setUserName(_nameController.text.capitalized);
 
                 Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(
-                    builder: (context) => const HomePage(),
-                  ),
+                  MaterialPageRoute(builder: (context) => const HomePage()),
                 );
               },
             ),

@@ -1,3 +1,4 @@
+import 'package:aphasia/constants.dart';
 import 'package:aphasia/model/word.dart';
 import 'package:flutter/material.dart';
 
@@ -12,13 +13,15 @@ class WordLabel extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      padding: const EdgeInsets.symmetric(
+        horizontal: kMediumSize,
+        vertical: kSmallSize,
+      ),
       decoration: BoxDecoration(color: theme.primaryColor),
       child: Text(
         word.content,
-        style: TextStyle(
+        style: theme.textTheme.titleLarge!.copyWith(
           color: theme.colorScheme.onPrimary,
-          fontSize: 18,
         ),
         overflow: TextOverflow.fade,
       ),

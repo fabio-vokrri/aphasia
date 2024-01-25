@@ -1,3 +1,4 @@
+import 'package:aphasia/constants.dart';
 import 'package:aphasia/db/words_db.dart';
 import 'package:aphasia/providers/edit_mode_provider.dart';
 import 'package:aphasia/providers/user_provider.dart';
@@ -30,9 +31,8 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     final wordProvider = Provider.of<WordProvider>(context);
     final editModeProvider = Provider.of<EditModeProvider>(context);
+    final deviceWidth = MediaQuery.of(context).size.width;
     final theme = Theme.of(context);
-
-    const double goldenRatio = 1.61803398875;
 
     return Scaffold(
       appBar: AppBar(
@@ -49,7 +49,7 @@ class _HomePageState extends State<HomePage> {
                 : const Icon(Icons.edit),
             tooltip: "Modifica",
           ),
-          const SizedBox(width: 16.0),
+          const SizedBox(width: kMediumSize),
         ],
       ),
       body: FutureBuilder(
@@ -61,7 +61,7 @@ class _HomePageState extends State<HomePage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   CircularProgressIndicator(),
-                  SizedBox(height: 16),
+                  SizedBox(height: kMediumSize),
                   Text("Sto caricando le tue parole...")
                 ],
               ),
@@ -72,9 +72,9 @@ class _HomePageState extends State<HomePage> {
               ? const Center(child: Text("Nessuna parola ancora aggiunta!"))
               : GridView.count(
                   crossAxisCount: 2,
-                  padding: const EdgeInsets.all(16.0),
-                  mainAxisSpacing: 8,
-                  crossAxisSpacing: 8,
+                  padding: const EdgeInsets.all(kMediumSize),
+                  mainAxisSpacing: kSmallSize,
+                  crossAxisSpacing: kSmallSize,
                   childAspectRatio: goldenRatio - 1,
                   children: wordProvider.filter(_filter).map((word) {
                     return WordCard(word: word);
@@ -122,14 +122,17 @@ class _HomePageState extends State<HomePage> {
           });
         },
         destinations: [
-          ...WordFilter.values.map((filter) {
+          SizedBox(width: deviceWidth / 2),
+          ...WordFilter.values.where((WordFilter filter) {
+            return filter.toBeShown;
+          }).map((filter) {
             return NavigationDestination(
               icon: filter.icon,
               label: filter.label,
               selectedIcon: filter.activeIcon,
             );
-          }).take(2),
-          const Spacer(),
+          }),
+          SizedBox(width: deviceWidth / 2),
         ],
       ),
     );

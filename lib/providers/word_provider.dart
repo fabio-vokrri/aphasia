@@ -9,31 +9,31 @@ enum WordFilter {
     label: "Tutte",
     icon: Icon(Icons.home_outlined),
     activeIcon: Icon(Icons.home),
+    toBeShown: true,
   ),
   favourites(
     label: "Preferite",
     icon: Icon(Icons.favorite_border),
     activeIcon: Icon(Icons.favorite),
+    toBeShown: true,
   ),
-  // mostUsed(
-  //   label: "Più Usate",
-  //   icon: Icon(Icons.star_border),
-  //   activeIcon: Icon(Icons.star),
-  // ),
   toBeDeleted(
     label: "Da eliminare",
     icon: Icon(Icons.delete_outline),
     activeIcon: Icon(Icons.delete),
+    toBeShown: false,
   );
 
   final String label;
   final Icon icon;
   final Icon activeIcon;
+  final bool toBeShown;
 
   const WordFilter({
     required this.label,
     required this.icon,
     required this.activeIcon,
+    required this.toBeShown,
   });
 }
 

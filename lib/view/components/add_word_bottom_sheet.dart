@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:aphasia/constants.dart';
 import 'package:aphasia/extensions/capitalize.dart';
 import 'package:aphasia/model/word.dart';
 import 'package:aphasia/providers/image_service.dart';
@@ -51,9 +52,9 @@ class _AddWordBottomSheetState extends State<AddWordBottomSheet> {
     final theme = Theme.of(context);
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 32.0) +
+      padding: const EdgeInsets.symmetric(horizontal: kLargeSize) +
           EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom + 32,
+            bottom: MediaQuery.of(context).viewInsets.bottom + kLargeSize,
           ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -64,7 +65,7 @@ class _AddWordBottomSheetState extends State<AddWordBottomSheet> {
             style: theme.textTheme.titleLarge!
                 .copyWith(overflow: TextOverflow.fade),
           ),
-          const SizedBox(height: 32.0),
+          const SizedBox(height: kLargeSize),
           Form(
             key: _key,
             child: TextFormField(
@@ -100,7 +101,7 @@ class _AddWordBottomSheetState extends State<AddWordBottomSheet> {
                 icon: _imageData == null ? Icons.collections_rounded : null,
                 image: _imageData,
               ),
-              const SizedBox(width: 16),
+              const SizedBox(width: kMediumSize),
               ImagePickerCard(
                 onTap: () async {
                   // if the image has not been selected yet open the image picker,
@@ -119,7 +120,7 @@ class _AddWordBottomSheetState extends State<AddWordBottomSheet> {
               ),
             ],
           ),
-          const SizedBox(height: 32.0),
+          const SizedBox(height: kLargeSize),
           Align(
             alignment: Alignment.centerRight,
             child: FilledButton.icon(

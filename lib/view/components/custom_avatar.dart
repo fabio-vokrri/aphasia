@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:aphasia/constants.dart';
 import 'package:flutter/material.dart';
 
 class CustomAvatar extends StatelessWidget {
@@ -23,7 +24,7 @@ class CustomAvatar extends StatelessWidget {
       width: size,
       decoration: BoxDecoration(
         color: theme.colorScheme.primaryContainer,
-        borderRadius: BorderRadius.circular(16.0),
+        borderRadius: BorderRadius.circular(kMediumSize),
         image: image != null
             ? DecorationImage(
                 image: MemoryImage(image!),

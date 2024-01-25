@@ -25,7 +25,6 @@ class WordsDatabaseService {
         CREATE TABLE $_dbName(
           id TEXT PRIMARY KEY NOT NULL, 
           isFavourite INTEGER NOT NULL,
-          counter INTEGER NOT NULL,
           image BLOB
         )
       """,

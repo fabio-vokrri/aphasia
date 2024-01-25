@@ -5,18 +5,15 @@ class Word {
   bool _isFavourite;
   bool _isSelected;
   Uint8List? _image;
-  int _counter;
 
   Word(
     String content, {
     bool isFavourite = false,
     bool isSelected = false,
-    int counter = 0,
     Uint8List? image,
   })  : _content = content,
         _isFavourite = isFavourite,
         _isSelected = isSelected,
-        _counter = counter,
         _image = image;
 
   Map<String, dynamic> toMap() {
@@ -24,7 +21,6 @@ class Word {
       "id": _content,
       "isFavourite": _isFavourite ? 1 : 0,
       "image": _image,
-      "counter": _counter,
     };
   }
 
@@ -33,18 +29,15 @@ class Word {
       map["id"],
       isFavourite: map["isFavourite"] == 1,
       image: map["image"],
-      counter: map["counter"],
     );
   }
 
   String get content => _content;
   String get id => _content;
-  int get counter => _counter;
   bool get isFavourite => _isFavourite;
   bool get isSelected => _isSelected;
 
   Uint8List? get image => _image;
-  void incrementCounter() => _counter++;
   void toggleFavourite() => _isFavourite = !_isFavourite;
   void toggleSelected() => _isSelected = !_isSelected;
 }
