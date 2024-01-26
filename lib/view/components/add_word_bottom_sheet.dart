@@ -26,24 +26,13 @@ class _AddWordBottomSheetState extends State<AddWordBottomSheet> {
   final _focusNode = FocusNode();
 
   XFile? _imageData;
+  bool isAnalysingImage = false;
 
   @override
   void dispose() {
     _wordController.dispose();
     _focusNode.dispose();
     super.dispose();
-  }
-
-  void _setImageLabel(XFile? image) async {
-    if (_imageData != null && _wordController.text.isEmpty) {
-      _wordController.text = await ImageService.getLabel(_imageData!);
-      setState(() {});
-    }
-  }
-
-  void _setImageFrom(ImageSource source) async {
-    _imageData = await ImageService.pickImageFrom(source);
-    setState(() {});
   }
 
   @override
@@ -95,7 +84,11 @@ class _AddWordBottomSheetState extends State<AddWordBottomSheet> {
               ImagePickerCard(
                 onTap: () async {
                   if (_imageData == null) {
-                    _setImageFrom(ImageSource.gallery);
+                    _imageData = await ImageService.pickImageFrom(
+                      ImageSource.gallery,
+                    );
+
+                    setState(() {});
                   }
                 },
                 icon: _imageData == null ? Icons.collections_rounded : null,
@@ -107,12 +100,13 @@ class _AddWordBottomSheetState extends State<AddWordBottomSheet> {
                   // if the image has not been selected yet open the image picker,
                   // else discard the choice.
                   if (_imageData == null) {
-                    _setImageFrom(ImageSource.camera);
-                    _setImageLabel(_imageData);
+                    _imageData = await ImageService.pickImageFrom(
+                      ImageSource.camera,
+                    );
                   } else {
                     _imageData = null;
-                    setState(() {});
                   }
+                  setState(() {});
                 },
                 icon: _imageData == null
                     ? Icons.add_a_photo_rounded

@@ -16,7 +16,8 @@ class DeleteWordsDialog extends StatelessWidget {
       icon: const Icon(Icons.delete),
       title: const Text("Eliminare le parole selezionate?"),
       content: const Text(
-        "Una volta eliminate, le parole non possono più essere recuperate. Sicuro di voler procedere?",
+        "Una volta eliminate, le parole non possono più essere recuperate.\n"
+        "Sicuro di voler procedere?",
       ),
       actions: [
         ElevatedButton(

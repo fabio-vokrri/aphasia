@@ -30,14 +30,12 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  google_mlkit_image_labeling: ^0.10.0
-  google_mlkit_translation: ^0.9.0
+  flutter_tts: ^3.8.5
   image_picker: ^1.0.7
   path: ^1.8.3
   provider: ^6.1.1
   shared_preferences: ^2.2.2
   sqflite: ^2.3.0
-  uuid: ^4.3.3
 
 dev_dependencies:
   flutter_test:

@@ -1,7 +1,5 @@
-// ignore_for_file: unused_label
-
 import 'package:aphasia/providers/edit_mode_provider.dart';
-import 'package:aphasia/providers/tts_provider.dart';
+import 'package:aphasia/providers/page_provider.dart';
 import 'package:aphasia/providers/user_provider.dart';
 import 'package:aphasia/providers/word_provider.dart';
 import 'package:aphasia/view/pages/home.dart';
@@ -17,21 +15,24 @@ void main(List<String> args) async {
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
+      systemNavigationBarColor: Colors.transparent,
+      systemNavigationBarDividerColor: Colors.transparent,
     ),
   );
+
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
 
-  // initializes the tts engine and the user provider class
-  TTSProvider.init();
+  // initializes the user provider.
+  // retrieves the user's locally saved data (the name)
   await UserProvider.init();
-  bool isNewUser = UserProvider.isNewUser;
 
   // runs the app
-  runApp(Aphasia(isNewUser: isNewUser));
+  runApp(Aphasia(isNewUser: UserProvider.isNewUser));
 }
 
 class Aphasia extends StatelessWidget {
@@ -44,6 +45,7 @@ class Aphasia extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (context) => WordProvider()),
         ChangeNotifierProvider(create: (context) => EditModeProvider()),
+        ChangeNotifierProvider(create: (context) => PageProvider()),
       ],
       // consumes the edit mode provider
       // in order to set the seed color to red when in edit mode.

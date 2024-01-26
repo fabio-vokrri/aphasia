@@ -9,31 +9,21 @@ enum WordFilter {
     label: "Tutte",
     icon: Icon(Icons.home_outlined),
     activeIcon: Icon(Icons.home),
-    toBeShown: true,
   ),
   favourites(
     label: "Preferite",
     icon: Icon(Icons.favorite_border),
     activeIcon: Icon(Icons.favorite),
-    toBeShown: true,
-  ),
-  toBeDeleted(
-    label: "Da eliminare",
-    icon: Icon(Icons.delete_outline),
-    activeIcon: Icon(Icons.delete),
-    toBeShown: false,
   );
 
   final String label;
   final Icon icon;
   final Icon activeIcon;
-  final bool toBeShown;
 
   const WordFilter({
     required this.label,
     required this.icon,
     required this.activeIcon,
-    required this.toBeShown,
   });
 }
 
@@ -93,7 +83,7 @@ class WordProvider extends ChangeNotifier {
   }
 
   void deleteBin() async {
-    List<Word> toBeDeleted = filter(WordFilter.toBeDeleted);
+    List<Word> toBeDeleted = getToBeDeletedWords.toList();
 
     for (Word word in toBeDeleted) {
       delete(word);
@@ -101,16 +91,14 @@ class WordProvider extends ChangeNotifier {
   }
 
   /// Filters the words based on the given `filter`.
-  UnmodifiableListView<Word> filter(WordFilter filter) {
+  UnmodifiableListView<Word> filterBy(WordFilter filter) {
     return switch (filter) {
-      WordFilter.toBeDeleted => _getToBeDeletedWords,
-      WordFilter.favourites => _getFavouriteWords,
-      // WordFilter.mostUsed => _getMostUsed,
-      WordFilter.all => _getAllWords,
+      WordFilter.favourites => getFavouriteWords,
+      WordFilter.all => getAllWords,
     };
   }
 
-  UnmodifiableListView<Word> get _getAllWords {
+  UnmodifiableListView<Word> get getAllWords {
     return UnmodifiableListView(_words);
   }
 
@@ -119,11 +107,11 @@ class WordProvider extends ChangeNotifier {
   //   return UnmodifiableListView(_words.take(10));
   // }
 
-  UnmodifiableListView<Word> get _getFavouriteWords {
+  UnmodifiableListView<Word> get getFavouriteWords {
     return UnmodifiableListView(_words.where((Word word) => word.isFavourite));
   }
 
-  UnmodifiableListView<Word> get _getToBeDeletedWords {
+  UnmodifiableListView<Word> get getToBeDeletedWords {
     return UnmodifiableListView(_words.where((Word word) => word.isSelected));
   }
 

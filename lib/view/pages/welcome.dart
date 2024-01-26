@@ -178,7 +178,6 @@ class _SecondWelcomePageState extends State<SecondWelcomePage> {
               onPressed: () {
                 if (_nameController.text.isEmpty) return;
                 UserProvider.setUserName(_nameController.text.capitalized);
-
                 Navigator.of(context).pushReplacement(
                   MaterialPageRoute(builder: (context) => const HomePage()),
                 );

@@ -16,7 +16,5 @@ class EditModeProvider extends ChangeNotifier {
   }
 
   bool get isEditMode => _isEditMode;
-  Color get getColor {
-    return _isEditMode ? Colors.red : Colors.blue;
-  }
+  Color get getColor => _isEditMode ? Colors.red : Colors.green;
 }

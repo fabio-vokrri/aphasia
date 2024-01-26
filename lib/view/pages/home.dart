@@ -1,11 +1,8 @@
 import 'package:aphasia/constants.dart';
-import 'package:aphasia/db/words_db.dart';
 import 'package:aphasia/providers/edit_mode_provider.dart';
 import 'package:aphasia/providers/user_provider.dart';
 import 'package:aphasia/providers/word_provider.dart';
-import 'package:aphasia/view/components/add_word_bottom_sheet.dart';
-import 'package:aphasia/view/components/delete_words_dialog.dart';
-import 'package:aphasia/view/components/no_selected_words_dialog.dart';
+import 'package:aphasia/view/components/add_word_fab.dart';
 import 'package:aphasia/view/components/word_card.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -20,10 +17,17 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _currentIndex = 0;
   WordFilter _filter = WordFilter.all;
+  final _controller = ScrollController();
+
+  @override
+  void initState() {
+    _controller.addListener(() {});
+    super.initState();
+  }
 
   @override
   void dispose() {
-    WordsDatabaseService.close();
+    _controller.dispose();
     super.dispose();
   }
 
@@ -31,8 +35,6 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     final wordProvider = Provider.of<WordProvider>(context);
     final editModeProvider = Provider.of<EditModeProvider>(context);
-    final deviceWidth = MediaQuery.of(context).size.width;
-    final theme = Theme.of(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -49,9 +51,11 @@ class _HomePageState extends State<HomePage> {
                 : const Icon(Icons.edit),
             tooltip: "Modifica",
           ),
+          IconButton(onPressed: () {}, icon: const Icon(Icons.more_vert)),
           const SizedBox(width: kMediumSize),
         ],
       ),
+      // drawer: const CustomDrawer(),
       body: FutureBuilder(
         future: wordProvider.isInitCompleted,
         builder: (context, snapshot) {
@@ -68,51 +72,24 @@ class _HomePageState extends State<HomePage> {
             );
           }
 
-          return wordProvider.filter(_filter).isEmpty
-              ? const Center(child: Text("Nessuna parola ancora aggiunta!"))
-              : GridView.count(
-                  crossAxisCount: 2,
-                  padding: const EdgeInsets.all(kMediumSize),
-                  mainAxisSpacing: kSmallSize,
-                  crossAxisSpacing: kSmallSize,
-                  childAspectRatio: goldenRatio - 1,
-                  children: wordProvider.filter(_filter).map((word) {
-                    return WordCard(word: word);
-                  }).toList(),
-                );
-        },
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
-      floatingActionButton: FloatingActionButton.extended(
-        label: Text(editModeProvider.isEditMode ? "Elimina " : "Aggiungi"),
-        tooltip: editModeProvider.isEditMode
-            ? "Rimuovi selezionati"
-            : "Aggiungi nuova parola",
-        backgroundColor: theme.primaryColor,
-        foregroundColor: theme.colorScheme.onPrimary,
-        onPressed: () {
-          if (editModeProvider.isEditMode) {
-            showDialog(
-              context: context,
-              builder: (context) {
-                if (wordProvider.filter(WordFilter.toBeDeleted).isEmpty) {
-                  return const NoSelectedWordsDialog();
-                }
-                return const DeleteWordsDialog();
-              },
-            );
+          if (wordProvider.filterBy(_filter).isEmpty) {
+            return const Center(child: Text("Nessuna parola ancora aggiunta!"));
           } else {
-            showModalBottomSheet(
-              showDragHandle: true,
-              enableDrag: true,
-              isScrollControlled: true,
-              context: context,
-              builder: (context) => const AddWordBottomSheet(),
+            return GridView.count(
+              controller: _controller,
+              crossAxisCount: 2,
+              padding: const EdgeInsets.all(kMediumSize),
+              mainAxisSpacing: kSmallSize,
+              crossAxisSpacing: kSmallSize,
+              childAspectRatio: goldenRatio - 1,
+              children: wordProvider.filterBy(_filter).map((word) {
+                return WordCard(word: word);
+              }).toList(),
             );
           }
         },
-        icon: Icon(editModeProvider.isEditMode ? Icons.delete : Icons.add),
       ),
+      floatingActionButton: const AddWordFAB(),
       bottomNavigationBar: NavigationBar(
         selectedIndex: _currentIndex,
         onDestinationSelected: (int index) {
@@ -122,19 +99,71 @@ class _HomePageState extends State<HomePage> {
           });
         },
         destinations: [
-          SizedBox(width: deviceWidth / 2),
-          ...WordFilter.values.where((WordFilter filter) {
-            return filter.toBeShown;
-          }).map((filter) {
+          ...WordFilter.values.map((filter) {
             return NavigationDestination(
+              tooltip: filter.label,
               icon: filter.icon,
               label: filter.label,
               selectedIcon: filter.activeIcon,
             );
           }),
-          SizedBox(width: deviceWidth / 2),
         ],
       ),
     );
   }
 }
+
+// class CustomDrawer extends StatelessWidget {
+//   const CustomDrawer({super.key});
+
+//   @override
+//   Widget build(BuildContext context) {
+//     final pageProvider = Provider.of<PageProvider>(context);
+//     final wordProvider = Provider.of<WordProvider>(context);
+//     final theme = Theme.of(context);
+
+//     return NavigationDrawer(
+//       selectedIndex: pageProvider.getIndex,
+//       onDestinationSelected: (int index) {
+//         pageProvider.setIndexTo(index);
+//         Navigator.of(context).pushReplacement(
+//           MaterialPageRoute(builder: (context) => pageProvider.getPage),
+//         );
+//       },
+//       children: [
+//         DrawerHeader(
+//           child: Align(
+//             alignment: Alignment.centerLeft,
+//             child: Text.rich(
+//               TextSpan(
+//                 text: "${UserProvider.getUserName}\n",
+//                 style: theme.textTheme.titleLarge!.copyWith(
+//                   fontWeight: FontWeight.bold,
+//                 ),
+//                 children: [
+//                   TextSpan(
+//                     text: wordProvider.getWordsCountString(),
+//                     style: theme.textTheme.bodyLarge!.copyWith(
+//                       color: theme.colorScheme.onBackground.withOpacity(0.75),
+//                     ),
+//                   )
+//                 ],
+//               ),
+//               overflow: TextOverflow.ellipsis,
+//             ),
+//           ),
+//         ),
+//         const NavigationDrawerDestination(
+//           icon: Icon(Icons.home_outlined),
+//           selectedIcon: Icon(Icons.home),
+//           label: Text("Pagina iniziale"),
+//         ),
+//         const NavigationDrawerDestination(
+//           icon: Icon(Icons.settings_outlined),
+//           selectedIcon: Icon(Icons.settings),
+//           label: Text("Impostazioni"),
+//         ),
+//       ],
+//     );
+//   }
+// }
