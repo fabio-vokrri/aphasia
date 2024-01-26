@@ -20,7 +20,7 @@ class WordLabel extends StatelessWidget {
       decoration: BoxDecoration(color: theme.primaryColor),
       child: Text(
         word.content,
-        style: theme.textTheme.titleLarge!.copyWith(
+        style: theme.textTheme.titleMedium!.copyWith(
           color: theme.colorScheme.onPrimary,
         ),
         overflow: TextOverflow.fade,

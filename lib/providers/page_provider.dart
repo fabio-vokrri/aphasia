@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 class PageProvider extends ChangeNotifier {
   int _index = 0;
-  final List<Widget> _pages = const [HomePage(), SettingsPage()];
+  final List<Widget> _pages = [const HomePage(), SettingsPage()];
 
   void setIndexTo(int index) {
     _index = index;

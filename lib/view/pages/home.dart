@@ -1,5 +1,6 @@
 import 'package:aphasia/constants.dart';
 import 'package:aphasia/providers/edit_mode_provider.dart';
+import 'package:aphasia/providers/page_provider.dart';
 import 'package:aphasia/providers/user_provider.dart';
 import 'package:aphasia/providers/word_provider.dart';
 import 'package:aphasia/view/components/add_word_fab.dart';
@@ -51,11 +52,10 @@ class _HomePageState extends State<HomePage> {
                 : const Icon(Icons.edit),
             tooltip: "Modifica",
           ),
-          IconButton(onPressed: () {}, icon: const Icon(Icons.more_vert)),
           const SizedBox(width: kMediumSize),
         ],
       ),
-      // drawer: const CustomDrawer(),
+      drawer: const CustomDrawer(),
       body: FutureBuilder(
         future: wordProvider.isInitCompleted,
         builder: (context, snapshot) {
@@ -113,57 +113,59 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-// class CustomDrawer extends StatelessWidget {
-//   const CustomDrawer({super.key});
+class CustomDrawer extends StatelessWidget {
+  const CustomDrawer({super.key});
 
-//   @override
-//   Widget build(BuildContext context) {
-//     final pageProvider = Provider.of<PageProvider>(context);
-//     final wordProvider = Provider.of<WordProvider>(context);
-//     final theme = Theme.of(context);
+  @override
+  Widget build(BuildContext context) {
+    final pageProvider = Provider.of<PageProvider>(context);
+    final wordProvider = Provider.of<WordProvider>(context);
+    final theme = Theme.of(context);
 
-//     return NavigationDrawer(
-//       selectedIndex: pageProvider.getIndex,
-//       onDestinationSelected: (int index) {
-//         pageProvider.setIndexTo(index);
-//         Navigator.of(context).pushReplacement(
-//           MaterialPageRoute(builder: (context) => pageProvider.getPage),
-//         );
-//       },
-//       children: [
-//         DrawerHeader(
-//           child: Align(
-//             alignment: Alignment.centerLeft,
-//             child: Text.rich(
-//               TextSpan(
-//                 text: "${UserProvider.getUserName}\n",
-//                 style: theme.textTheme.titleLarge!.copyWith(
-//                   fontWeight: FontWeight.bold,
-//                 ),
-//                 children: [
-//                   TextSpan(
-//                     text: wordProvider.getWordsCountString(),
-//                     style: theme.textTheme.bodyLarge!.copyWith(
-//                       color: theme.colorScheme.onBackground.withOpacity(0.75),
-//                     ),
-//                   )
-//                 ],
-//               ),
-//               overflow: TextOverflow.ellipsis,
-//             ),
-//           ),
-//         ),
-//         const NavigationDrawerDestination(
-//           icon: Icon(Icons.home_outlined),
-//           selectedIcon: Icon(Icons.home),
-//           label: Text("Pagina iniziale"),
-//         ),
-//         const NavigationDrawerDestination(
-//           icon: Icon(Icons.settings_outlined),
-//           selectedIcon: Icon(Icons.settings),
-//           label: Text("Impostazioni"),
-//         ),
-//       ],
-//     );
-//   }
-// }
+    return NavigationDrawer(
+      selectedIndex: pageProvider.getIndex,
+      onDestinationSelected: (int index) {
+        if (pageProvider.getIndex != index) {
+          pageProvider.setIndexTo(index);
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => pageProvider.getPage),
+          );
+        }
+      },
+      children: [
+        DrawerHeader(
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: Text.rich(
+              TextSpan(
+                text: "${UserProvider.getUserName}\n",
+                style: theme.textTheme.titleLarge!.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+                children: [
+                  TextSpan(
+                    text: wordProvider.getWordsCountString(),
+                    style: theme.textTheme.bodyLarge!.copyWith(
+                      color: theme.colorScheme.onBackground.withOpacity(0.75),
+                    ),
+                  )
+                ],
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ),
+        const NavigationDrawerDestination(
+          icon: Icon(Icons.home_outlined),
+          selectedIcon: Icon(Icons.home),
+          label: Text("Pagina iniziale"),
+        ),
+        const NavigationDrawerDestination(
+          icon: Icon(Icons.settings_outlined),
+          selectedIcon: Icon(Icons.settings),
+          label: Text("Impostazioni"),
+        ),
+      ],
+    );
+  }
+}

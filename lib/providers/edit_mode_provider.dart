@@ -1,3 +1,4 @@
+import 'package:aphasia/constants.dart';
 import 'package:flutter/material.dart';
 
 class EditModeProvider extends ChangeNotifier {
@@ -16,5 +17,5 @@ class EditModeProvider extends ChangeNotifier {
   }
 
   bool get isEditMode => _isEditMode;
-  Color get getColor => _isEditMode ? Colors.red : Colors.green;
+  Color get getColor => _isEditMode ? kEditColor : kBaseColor;
 }

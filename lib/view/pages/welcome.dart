@@ -155,9 +155,7 @@ class _SecondWelcomePageState extends State<SecondWelcomePage> {
               prefixIconColor: theme.colorScheme.onPrimary,
               label: Text(
                 "Inserisci il tuo nome",
-                style: theme.textTheme.bodyLarge!.copyWith(
-                  color: theme.colorScheme.onPrimary,
-                ),
+                style: TextStyle(color: theme.colorScheme.onPrimary),
               ),
               prefixIcon: const Icon(Icons.person),
             ),
@@ -166,8 +164,8 @@ class _SecondWelcomePageState extends State<SecondWelcomePage> {
           Align(
             alignment: Alignment.bottomRight,
             child: FloatingActionButton.extended(
-              backgroundColor: theme.primaryColor,
-              foregroundColor: theme.colorScheme.onPrimary,
+              backgroundColor: theme.colorScheme.onPrimary,
+              foregroundColor: theme.primaryColor,
               label: const Row(
                 children: [
                   Text("Incominciamo"),
