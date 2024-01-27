@@ -43,7 +43,7 @@ class _AddWordBottomSheetState extends State<AddWordBottomSheet> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: kLargeSize) +
           EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom + kLargeSize,
+            bottom: MediaQuery.of(context).viewInsets.bottom + kLargeSize * 2,
           ),
       child: Column(
         mainAxisSize: MainAxisSize.min,

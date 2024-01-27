@@ -77,7 +77,7 @@ class _HomePageState extends State<HomePage> {
           } else {
             return GridView.count(
               controller: _controller,
-              crossAxisCount: 2,
+              crossAxisCount: UserProvider.getNumberOfCardsPerRow,
               padding: const EdgeInsets.all(kMediumSize),
               mainAxisSpacing: kSmallSize,
               crossAxisSpacing: kSmallSize,
@@ -89,6 +89,9 @@ class _HomePageState extends State<HomePage> {
           }
         },
       ),
+      floatingActionButtonLocation: UserProvider.getIsRightToLeft
+          ? FloatingActionButtonLocation.startFloat
+          : FloatingActionButtonLocation.endFloat,
       floatingActionButton: const AddWordFAB(),
       bottomNavigationBar: NavigationBar(
         selectedIndex: _currentIndex,
@@ -132,6 +135,12 @@ class CustomDrawer extends StatelessWidget {
           );
         }
       },
+      tilePadding: const EdgeInsets.only(right: kMediumSize),
+      indicatorShape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.horizontal(
+          right: Radius.circular(kMediumSize),
+        ),
+      ),
       children: [
         DrawerHeader(
           child: Align(
@@ -160,6 +169,11 @@ class CustomDrawer extends StatelessWidget {
           selectedIcon: Icon(Icons.home),
           label: Text("Pagina iniziale"),
         ),
+        // const NavigationDrawerDestination(
+        //   icon: Icon(Icons.calendar_month_outlined),
+        //   selectedIcon: Icon(Icons.calendar_month),
+        //   label: Text("Calendario"),
+        // ),
         const NavigationDrawerDestination(
           icon: Icon(Icons.settings_outlined),
           selectedIcon: Icon(Icons.settings),

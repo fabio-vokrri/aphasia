@@ -13,3 +13,18 @@ const double kLargeSize = kMediumSize * 2;
 
 const Color kBaseColor = Colors.blue;
 const Color kEditColor = Colors.red;
+
+const double kSpeed = 0.5;
+const double kPitch = 1.0;
+const double kVolume = 1.0;
+
+const int kCardsPerRow = 2;
+const bool kIsRTL = false;
+
+const String userNameKey = "userName";
+const String isNewUserKey = "isNewUser";
+const String isRTLKey = "isRightToLeft";
+const String volumeKey = "volumeValue";
+const String speedKey = "speedValue";
+const String pitchKey = "pitchValue";
+const String cardsPerRowKey = "cardsPerRow";
