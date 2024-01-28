@@ -1,11 +1,14 @@
+import 'package:animations/animations.dart';
 import 'package:aphasia/constants.dart';
 import 'package:aphasia/providers/edit_mode_provider.dart';
 import 'package:aphasia/providers/page_provider.dart';
+import 'package:aphasia/providers/settings_provider.dart';
 import 'package:aphasia/providers/user_provider.dart';
 import 'package:aphasia/providers/word_provider.dart';
 import 'package:aphasia/view/components/add_word_fab.dart';
 import 'package:aphasia/view/components/word_card.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
@@ -19,10 +22,20 @@ class _HomePageState extends State<HomePage> {
   int _currentIndex = 0;
   WordFilter _filter = WordFilter.all;
   final _controller = ScrollController();
+  bool _showFAB = true;
 
   @override
   void initState() {
-    _controller.addListener(() {});
+    if (!SettingsProvider.getAnimationsAreRemoved) {
+      _controller.addListener(() {
+        if (_controller.position.userScrollDirection ==
+            ScrollDirection.reverse) {
+          setState(() => _showFAB = false);
+        } else {
+          setState(() => _showFAB = true);
+        }
+      });
+    }
     super.initState();
   }
 
@@ -75,24 +88,44 @@ class _HomePageState extends State<HomePage> {
           if (wordProvider.filterBy(_filter).isEmpty) {
             return const Center(child: Text("Nessuna parola ancora aggiunta!"));
           } else {
-            return GridView.count(
-              controller: _controller,
-              crossAxisCount: UserProvider.getNumberOfCardsPerRow,
-              padding: const EdgeInsets.all(kMediumSize),
-              mainAxisSpacing: kSmallSize,
-              crossAxisSpacing: kSmallSize,
-              childAspectRatio: goldenRatio - 1,
-              children: wordProvider.filterBy(_filter).map((word) {
-                return WordCard(word: word);
-              }).toList(),
+            return PageTransitionSwitcher(
+              reverse: true,
+              duration: Duration(
+                milliseconds:
+                    SettingsProvider.getAnimationsAreRemoved ? 0 : kDuration,
+              ),
+              transitionBuilder: (
+                Widget child,
+                Animation<double> primaryAnimation,
+                Animation<double> secondaryAnimation,
+              ) {
+                return SharedAxisTransition(
+                  animation: primaryAnimation,
+                  secondaryAnimation: secondaryAnimation,
+                  transitionType: SharedAxisTransitionType.horizontal,
+                  child: child,
+                );
+              },
+              child: GridView.count(
+                key: ValueKey<int>(_currentIndex),
+                controller: _controller,
+                crossAxisCount: SettingsProvider.getNumberOfCardsPerRow,
+                padding: const EdgeInsets.all(kMediumSize),
+                mainAxisSpacing: kSmallSize,
+                crossAxisSpacing: kSmallSize,
+                childAspectRatio: goldenRatio - 1,
+                children: wordProvider.filterBy(_filter).map((word) {
+                  return WordCard(word: word);
+                }).toList(),
+              ),
             );
           }
         },
       ),
-      floatingActionButtonLocation: UserProvider.getIsRightToLeft
+      floatingActionButtonLocation: SettingsProvider.getIsRightToLeft
           ? FloatingActionButtonLocation.startFloat
           : FloatingActionButtonLocation.endFloat,
-      floatingActionButton: const AddWordFAB(),
+      floatingActionButton: _showFAB ? const AddWordFAB() : null,
       bottomNavigationBar: NavigationBar(
         selectedIndex: _currentIndex,
         onDestinationSelected: (int index) {

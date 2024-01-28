@@ -1,6 +1,8 @@
 import 'package:aphasia/constants.dart';
+import 'package:aphasia/providers/settings_provider.dart';
 import 'package:aphasia/providers/tts_provider.dart';
 import 'package:aphasia/providers/user_provider.dart';
+import 'package:aphasia/view/components/reset_dialog.dart';
 import 'package:aphasia/view/pages/home.dart';
 import 'package:flutter/material.dart';
 
@@ -12,7 +14,8 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  final textController = TextEditingController(text: UserProvider.getUserName);
+  final _textController = TextEditingController();
+  final FocusNode _focusNode = FocusNode();
 
   late double volumeValue;
   late double speedValue;
@@ -20,7 +23,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
   @override
   void dispose() {
-    textController.dispose();
+    _textController.dispose();
     super.dispose();
   }
 
@@ -31,24 +34,34 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   void resetValues() {
-    volumeValue = UserProvider.getVolume;
-    speedValue = UserProvider.getSpeed;
-    pitchValue = UserProvider.getPitch;
+    volumeValue = SettingsProvider.getVolume;
+    speedValue = SettingsProvider.getSpeed;
+    pitchValue = SettingsProvider.getPitch;
 
     setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: const Text("Impostazioni"),
         actions: [
           IconButton(
             tooltip: "Reset",
-            onPressed: () async {
-              await UserProvider.reset();
-              resetValues();
+            onPressed: () {
+              _focusNode.unfocus();
+              showDialog(
+                context: context,
+                builder: (context) => const ResetDialog(),
+              ).then((value) {
+                if (value is bool && value) {
+                  resetValues();
+                }
+              });
             },
             icon: const Icon(Icons.refresh_rounded),
           ),
@@ -62,24 +75,33 @@ class _SettingsPageState extends State<SettingsPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SettingsSectionTitle(text: "Impostazioni Utente"),
-              const SizedBox(height: kLargeSize),
+              Text(
+                "Impostazioni utente",
+                style: theme.textTheme.bodyLarge!
+                    .copyWith(color: theme.primaryColor),
+              ),
+              const SizedBox(height: kMediumSize),
               TextFormField(
                 maxLength: 15,
-                controller: textController,
+                controller: _textController,
+                focusNode: _focusNode,
                 decoration: const InputDecoration(
                   prefixIcon: Icon(Icons.person),
                   border: OutlineInputBorder(),
-                  label: Text("Modifica il tuo nome utente"),
+                  label: Text("Modifica il tuo nome"),
                 ),
-                onFieldSubmitted: (String newName) {
-                  if (newName.isNotEmpty) {
-                    UserProvider.setUserName(newName);
+                onFieldSubmitted: (String value) {
+                  if (value.isNotEmpty && value != UserProvider.getUserName) {
+                    UserProvider.setUserName(value);
                   }
                 },
               ),
-              const SizedBox(height: kLargeSize),
-              const SettingsSectionTitle(text: "Impostazioni Voce"),
+              const Divider(height: kLargeSize * 2),
+              Text(
+                "Impostazioni voce",
+                style: theme.textTheme.bodyLarge!
+                    .copyWith(color: theme.primaryColor),
+              ),
               const SizedBox(height: kMediumSize),
               Row(
                 mainAxisSize: MainAxisSize.max,
@@ -91,7 +113,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       value: volumeValue,
                       divisions: 10,
                       onChangeEnd: (value) {
-                        UserProvider.setVolumeTo(value);
+                        SettingsProvider.setVolumeTo(value);
                       },
                       onChanged: (double value) {
                         volumeValue = value;
@@ -112,7 +134,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       value: speedValue,
                       divisions: 4,
                       onChangeEnd: (value) {
-                        UserProvider.setSpeedTo(value);
+                        SettingsProvider.setSpeedTo(value);
                       },
                       onChanged: (double value) {
                         speedValue = value;
@@ -135,7 +157,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       divisions: 3,
                       value: pitchValue,
                       onChangeEnd: (value) {
-                        UserProvider.setPitchTo(value);
+                        SettingsProvider.setPitchTo(value);
                       },
                       onChanged: (double value) {
                         pitchValue = value;
@@ -146,18 +168,19 @@ class _SettingsPageState extends State<SettingsPage> {
                 ],
               ),
               const SizedBox(height: kMediumSize),
-              Row(
-                children: [
-                  const Text("Prova voce: "),
-                  IconButton(
-                    onPressed: () =>
-                        TTSProvider.speak(UserProvider.getUserName),
-                    icon: const Icon(Icons.volume_up_rounded),
-                  ),
-                ],
+              ElevatedButton.icon(
+                onPressed: () {
+                  TTSProvider.speak(UserProvider.getUserName);
+                },
+                icon: const Icon(Icons.volume_up),
+                label: const Text("Prova impostazioni voce"),
               ),
-              const SizedBox(height: kLargeSize),
-              const SettingsSectionTitle(text: "Impostazioni disposizione"),
+              const Divider(height: kLargeSize * 2),
+              Text(
+                "Impostazioni disposizione",
+                style: theme.textTheme.bodyLarge!
+                    .copyWith(color: theme.primaryColor),
+              ),
               const SizedBox(height: kMediumSize),
               Theme(
                 data: ThemeData(
@@ -172,58 +195,63 @@ class _SettingsPageState extends State<SettingsPage> {
                     "Agevola le persone mancine nell'utilizzo dell'applicazione",
                   ),
                   thumbIcon: MaterialStateProperty.all<Icon>(
-                    UserProvider.getIsRightToLeft
+                    SettingsProvider.getIsRightToLeft
                         ? const Icon(Icons.done)
                         : const Icon(Icons.close),
                   ),
-                  value: UserProvider.getIsRightToLeft,
+                  value: SettingsProvider.getIsRightToLeft,
                   onChanged: (bool value) {
-                    UserProvider.toggleRTL();
+                    SettingsProvider.toggleRTL();
                     setState(() {});
                   },
                 ),
               ),
-              const SizedBox(height: kLargeSize),
-              const Text(
+              const SizedBox(height: kMediumSize),
+              Theme(
+                data: ThemeData(
+                  splashColor: Colors.transparent,
+                  highlightColor: Colors.transparent,
+                  colorScheme: ColorScheme.fromSeed(seedColor: kBaseColor),
+                ),
+                child: SwitchListTile(
+                  contentPadding: const EdgeInsets.all(0),
+                  title: const Text("Rimuovi animazioni"),
+                  subtitle: const Text(
+                    "Previene gli elementi visivi dall'avere animazioni",
+                  ),
+                  thumbIcon: MaterialStateProperty.all<Icon>(
+                    SettingsProvider.getAnimationsAreRemoved
+                        ? const Icon(Icons.done)
+                        : const Icon(Icons.close),
+                  ),
+                  value: SettingsProvider.getAnimationsAreRemoved,
+                  onChanged: (bool value) {
+                    SettingsProvider.toggleAnimations();
+                    setState(() {});
+                  },
+                ),
+              ),
+              const SizedBox(height: kMediumSize),
+              Text(
                 "Numero di parole per riga",
-                style: TextStyle(fontSize: kMediumSize),
+                style: theme.textTheme.bodyLarge,
               ),
               Slider(
-                value: UserProvider.getNumberOfCardsPerRow.toDouble(),
+                value: SettingsProvider.getNumberOfCardsPerRow.toDouble(),
                 divisions: 3,
                 min: 1,
                 max: 4,
-                label: UserProvider.getNumberOfCardsPerRow.toString(),
+                label: SettingsProvider.getNumberOfCardsPerRow.toString(),
                 onChanged: (double value) {
-                  UserProvider.setCardsPerRowTo(value.toInt());
+                  SettingsProvider.setCardsPerRowTo(value.toInt());
                   setState(() {});
                 },
-              )
+              ),
+              const SizedBox(height: kLargeSize * 2),
             ],
           ),
         ),
       ),
-    );
-  }
-}
-
-class SettingsSectionTitle extends StatelessWidget {
-  const SettingsSectionTitle({super.key, required this.text});
-
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return Column(
-      children: [
-        Text(
-          text,
-          style: theme.textTheme.bodyLarge!.copyWith(
-            color: theme.primaryColor,
-          ),
-        ),
-      ],
     );
   }
 }

@@ -22,6 +22,7 @@ class WordCard extends StatelessWidget {
       onTap: () {
         if (!editModeProvider.isEditMode) {
           TTSProvider.speak(word.content);
+          wordProvider.incrementCounter(word);
         } else {
           wordProvider.toggleSelected(word);
         }

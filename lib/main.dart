@@ -1,5 +1,6 @@
 import 'package:aphasia/providers/edit_mode_provider.dart';
 import 'package:aphasia/providers/page_provider.dart';
+import 'package:aphasia/providers/settings_provider.dart';
 import 'package:aphasia/providers/user_provider.dart';
 import 'package:aphasia/providers/word_provider.dart';
 import 'package:aphasia/view/pages/home.dart';
@@ -27,9 +28,10 @@ void main(List<String> args) async {
     DeviceOrientation.portraitDown,
   ]);
 
-  // initializes the user provider.
-  // retrieves the user's locally saved data (the name)
+  // initializes the user and settings providers.
+  // Retrieves the user's locally saved data
   await UserProvider.init();
+  await SettingsProvider.init();
 
   // runs the app
   runApp(Aphasia(isNewUser: UserProvider.isNewUser));

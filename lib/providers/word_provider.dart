@@ -14,6 +14,11 @@ enum WordFilter {
     label: "Preferite",
     icon: Icon(Icons.favorite_border),
     activeIcon: Icon(Icons.favorite),
+  ),
+  mostUsed(
+    label: "Più usate",
+    icon: Icon(Icons.star_border),
+    activeIcon: Icon(Icons.star),
   );
 
   final String label;
@@ -69,6 +74,12 @@ class WordProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void incrementCounter(Word word) {
+    word.incrementCounter();
+    _dataBaseService.update(word);
+    notifyListeners();
+  }
+
   /// Toggles the favourite flag on the given `word`.
   void toggleFavourite(Word word) async {
     word.toggleFavourite();
@@ -94,6 +105,7 @@ class WordProvider extends ChangeNotifier {
   UnmodifiableListView<Word> filterBy(WordFilter filter) {
     return switch (filter) {
       WordFilter.favourites => getFavouriteWords,
+      WordFilter.mostUsed => getMostUsed,
       WordFilter.all => getAllWords,
     };
   }
@@ -102,10 +114,12 @@ class WordProvider extends ChangeNotifier {
     return UnmodifiableListView(_words);
   }
 
-  // UnmodifiableListView<Word> get _getMostUsed {
-  //   _words.sort((a, b) => a.counter.compareTo(b.counter));
-  //   return UnmodifiableListView(_words.take(10));
-  // }
+  UnmodifiableListView<Word> get getMostUsed {
+    final copy = List<Word>.from(_words);
+
+    copy.sort((a, b) => b.counter.compareTo(a.counter));
+    return UnmodifiableListView(copy.take(10));
+  }
 
   UnmodifiableListView<Word> get getFavouriteWords {
     return UnmodifiableListView(_words.where((Word word) => word.isFavourite));

@@ -20,9 +20,11 @@ const double kVolume = 1.0;
 
 const int kCardsPerRow = 2;
 const bool kIsRTL = false;
+const bool kRemoveAnimations = false;
 
 const String userNameKey = "userName";
 const String isNewUserKey = "isNewUser";
+const String removeAnimationsKey = "removeAnimations";
 const String isRTLKey = "isRightToLeft";
 const String volumeKey = "volumeValue";
 const String speedKey = "speedValue";

@@ -12,7 +12,7 @@ class NoSelectedWordsDialog extends StatelessWidget {
         "Prima di procedere, seleziona le parole che vorresti eliminare.",
       ),
       actions: [
-        ElevatedButton(
+        TextButton(
           onPressed: () => Navigator.pop(context),
           child: const Text("OK"),
         ),
