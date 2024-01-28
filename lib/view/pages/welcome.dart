@@ -78,6 +78,7 @@ class FirstWelcomePage extends StatelessWidget {
           const SizedBox(height: kSmallSize),
           Text(
             "L'app che ti permette di parlare",
+            textAlign: TextAlign.center,
             style: theme.textTheme.titleLarge!.copyWith(
               color: theme.colorScheme.onPrimary.withOpacity(0.75),
               fontWeight: FontWeight.w300,

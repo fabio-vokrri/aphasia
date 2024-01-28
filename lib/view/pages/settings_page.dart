@@ -90,6 +90,11 @@ class _SettingsPageState extends State<SettingsPage> {
                   border: OutlineInputBorder(),
                   label: Text("Modifica il tuo nome"),
                 ),
+                onTap: () {
+                  setState(() {
+                    _textController.text = UserProvider.getUserName;
+                  });
+                },
                 onFieldSubmitted: (String value) {
                   if (value.isNotEmpty && value != UserProvider.getUserName) {
                     UserProvider.setUserName(value);

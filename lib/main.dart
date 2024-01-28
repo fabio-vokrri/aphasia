@@ -7,6 +7,7 @@ import 'package:aphasia/view/pages/home.dart';
 import 'package:aphasia/view/pages/welcome.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_displaymode/flutter_displaymode.dart';
 import 'package:provider/provider.dart';
 
 void main(List<String> args) async {
@@ -32,6 +33,9 @@ void main(List<String> args) async {
   // Retrieves the user's locally saved data
   await UserProvider.init();
   await SettingsProvider.init();
+
+  // sets high refresh rate for the devices that support it
+  await FlutterDisplayMode.setHighRefreshRate();
 
   // runs the app
   runApp(Aphasia(isNewUser: UserProvider.isNewUser));

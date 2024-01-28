@@ -85,41 +85,42 @@ class _HomePageState extends State<HomePage> {
             );
           }
 
-          if (wordProvider.filterBy(_filter).isEmpty) {
-            return const Center(child: Text("Nessuna parola ancora aggiunta!"));
-          } else {
-            return PageTransitionSwitcher(
-              reverse: true,
-              duration: Duration(
-                milliseconds:
-                    SettingsProvider.getAnimationsAreRemoved ? 0 : kDuration,
-              ),
-              transitionBuilder: (
-                Widget child,
-                Animation<double> primaryAnimation,
-                Animation<double> secondaryAnimation,
-              ) {
-                return SharedAxisTransition(
-                  animation: primaryAnimation,
-                  secondaryAnimation: secondaryAnimation,
-                  transitionType: SharedAxisTransitionType.horizontal,
-                  child: child,
-                );
-              },
-              child: GridView.count(
-                key: ValueKey<int>(_currentIndex),
-                controller: _controller,
-                crossAxisCount: SettingsProvider.getNumberOfCardsPerRow,
-                padding: const EdgeInsets.all(kMediumSize),
-                mainAxisSpacing: kSmallSize,
-                crossAxisSpacing: kSmallSize,
-                childAspectRatio: goldenRatio - 1,
-                children: wordProvider.filterBy(_filter).map((word) {
-                  return WordCard(word: word);
-                }).toList(),
-              ),
-            );
-          }
+          return PageTransitionSwitcher(
+            reverse: true,
+            duration: Duration(
+              milliseconds:
+                  SettingsProvider.getAnimationsAreRemoved ? 0 : kDuration,
+            ),
+            transitionBuilder: (
+              Widget child,
+              Animation<double> primaryAnimation,
+              Animation<double> secondaryAnimation,
+            ) {
+              return SharedAxisTransition(
+                animation: primaryAnimation,
+                secondaryAnimation: secondaryAnimation,
+                transitionType: SharedAxisTransitionType.horizontal,
+                child: child,
+              );
+            },
+            child: wordProvider.filterBy(_filter).isEmpty
+                ? Center(
+                    key: ValueKey<int>(_currentIndex),
+                    child: const Text("Nessuna parola ancora aggiunta!"),
+                  )
+                : GridView.count(
+                    key: ValueKey<int>(_currentIndex),
+                    controller: _controller,
+                    crossAxisCount: SettingsProvider.getNumberOfCardsPerRow,
+                    padding: const EdgeInsets.all(kMediumSize),
+                    mainAxisSpacing: kSmallSize,
+                    crossAxisSpacing: kSmallSize,
+                    childAspectRatio: goldenRatio - 1,
+                    children: wordProvider.filterBy(_filter).map((word) {
+                      return WordCard(word: word);
+                    }).toList(),
+                  ),
+          );
         },
       ),
       floatingActionButtonLocation: SettingsProvider.getIsRightToLeft
