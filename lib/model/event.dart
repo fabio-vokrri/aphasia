@@ -4,13 +4,11 @@ class Event {
   final String _id;
   final String _title;
   final DateTime _dateTime;
-  bool shouldNotify;
 
   Event({
     String? id,
     required String title,
     required DateTime dateTime,
-    this.shouldNotify = false,
   })  : _id = id ?? const Uuid().v8(),
         _title = title,
         _dateTime = dateTime;
@@ -24,7 +22,6 @@ class Event {
       "id": _id,
       "title": _title,
       "date": _dateTime.millisecondsSinceEpoch,
-      "shouldNotify": shouldNotify ? 1 : 0,
     };
   }
 
@@ -33,7 +30,6 @@ class Event {
       id: map["id"],
       title: map["title"],
       dateTime: DateTime.fromMillisecondsSinceEpoch(map["date"]),
-      shouldNotify: map["shouldNotify"] == 1,
     );
   }
 }

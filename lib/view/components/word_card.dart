@@ -1,7 +1,7 @@
 import 'package:aphasia/constants.dart';
 import 'package:aphasia/model/word.dart';
 import 'package:aphasia/providers/edit_mode_provider.dart';
-import 'package:aphasia/services/tts_service_provider.dart';
+import 'package:aphasia/services/tts_service.dart';
 import 'package:aphasia/providers/words_provider.dart';
 import 'package:aphasia/view/components/word_label.dart';
 import 'package:flutter/material.dart';

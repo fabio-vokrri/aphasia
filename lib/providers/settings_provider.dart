@@ -1,5 +1,5 @@
 import 'package:aphasia/constants.dart';
-import 'package:aphasia/services/tts_service_provider.dart';
+import 'package:aphasia/services/tts_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsProvider {

@@ -1,6 +1,6 @@
 import 'package:aphasia/constants.dart';
 import 'package:aphasia/providers/settings_provider.dart';
-import 'package:aphasia/services/tts_service_provider.dart';
+import 'package:aphasia/services/tts_service.dart';
 import 'package:aphasia/providers/user_provider.dart';
 import 'package:aphasia/view/components/custom_drawer.dart';
 import 'package:aphasia/view/components/reset_dialog.dart';

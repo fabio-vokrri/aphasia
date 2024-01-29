@@ -34,15 +34,19 @@ class _CalendarPageState extends State<CalendarPage> {
             },
           ),
           const Divider(height: 0),
-          FutureBuilder(
-            future: eventsProvider.isInitCompleted,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: Text("Sto caricando gli eventi..."));
-              }
+          Expanded(
+            child: FutureBuilder(
+              future: eventsProvider.isInitCompleted,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: Text("Sto caricando gli eventi..."),
+                  );
+                }
 
-              return EventsList(selectedDateTime: _selectedDateTime);
-            },
+                return EventsList(selectedDateTime: _selectedDateTime);
+              },
+            ),
           ),
         ],
       ),

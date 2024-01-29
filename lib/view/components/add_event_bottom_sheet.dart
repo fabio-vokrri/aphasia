@@ -7,9 +7,9 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class AddEventBottomSheet extends StatefulWidget {
-  const AddEventBottomSheet({super.key, required this.dateTime});
+  const AddEventBottomSheet({super.key, this.dateTime});
 
-  final DateTime dateTime;
+  final DateTime? dateTime;
 
   @override
   State<AddEventBottomSheet> createState() => _AddEventBottomSheetState();
@@ -18,7 +18,7 @@ class AddEventBottomSheet extends StatefulWidget {
 class _AddEventBottomSheetState extends State<AddEventBottomSheet> {
   final _controller = TextEditingController();
   TimeOfDay selectedTimeOfDay = TimeOfDay.now();
-  bool shouldNotify = false;
+  DateTime selectedDateTime = DateTime.now();
 
   @override
   void dispose() {
@@ -48,46 +48,53 @@ class _AddEventBottomSheetState extends State<AddEventBottomSheet> {
           ),
           const SizedBox(height: kSmallSize),
           Text(
-            "Per il giorno ${DateFormat.yMMMMd("it_IT").format(widget.dateTime)}",
+            "Per il giorno ${DateFormat.yMMMMd("it_IT").format(selectedDateTime)}",
           ),
           const SizedBox(height: kLargeSize),
           TextFormField(
             controller: _controller,
-            decoration: InputDecoration(
-              border: const OutlineInputBorder(),
-              label: const Text("Nome dell'evento"),
+            decoration: const InputDecoration(
+              border: OutlineInputBorder(),
+              label: Text("Nome dell'evento"),
               hintText: "esempio: Logopedista",
-              suffixIcon: IconButton(
-                onPressed: () {
-                  showTimePicker(
-                    context: context,
-                    initialTime: TimeOfDay.now(),
-                    helpText: "Scegli l'orario della visita",
-                  ).then((TimeOfDay? value) {
-                    if (value != null) {
-                      setState(() => selectedTimeOfDay = value);
-                    }
-                  });
-                },
-                icon: const Icon(Icons.schedule),
-              ),
             ),
           ),
-          const SizedBox(height: kSmallSize),
-          Theme(
-            data: ThemeData(
-              splashColor: Colors.transparent,
-              highlightColor: Colors.transparent,
-              colorScheme: ColorScheme.fromSeed(seedColor: kBaseColor),
-            ),
-            child: SwitchListTile(
-              contentPadding: EdgeInsets.zero,
-              secondary: const Icon(Icons.notification_add),
-              title: const Text("Mandami una notifica"),
-              value: shouldNotify,
-              onChanged: (value) {
-                setState(() => shouldNotify = value);
+          const SizedBox(height: kLargeSize),
+          ListTile(
+            contentPadding: EdgeInsets.zero,
+            title: const Text("Seleziona giorno"),
+            trailing: IconButton(
+              onPressed: () {
+                showDatePicker(
+                  context: context,
+                  initialDate: widget.dateTime ?? selectedDateTime,
+                  firstDate: DateTime.now(),
+                  lastDate: DateTime(2100),
+                ).then((value) {
+                  if (value != null) {
+                    setState(() => selectedDateTime = value);
+                  }
+                });
               },
+              icon: const Icon(Icons.calendar_month_outlined),
+            ),
+          ),
+          ListTile(
+            contentPadding: EdgeInsets.zero,
+            title: const Text("Seleziona ora"),
+            trailing: IconButton(
+              onPressed: () {
+                showTimePicker(
+                  context: context,
+                  initialTime: TimeOfDay.now(),
+                  helpText: "Scegli l'orario della visita",
+                ).then((TimeOfDay? value) {
+                  if (value != null) {
+                    setState(() => selectedTimeOfDay = value);
+                  }
+                });
+              },
+              icon: const Icon(Icons.schedule),
             ),
           ),
           const SizedBox(height: kLargeSize),
@@ -99,9 +106,9 @@ class _AddEventBottomSheetState extends State<AddEventBottomSheet> {
                   title: _controller.text.isNotEmpty
                       ? _controller.text
                       : "Logopedista",
-                  dateTime: widget.dateTime.apply(selectedTimeOfDay),
-                  shouldNotify: shouldNotify,
+                  dateTime: selectedDateTime.apply(selectedTimeOfDay),
                 );
+
                 eventsProvider.add(newEvent);
                 Navigator.pop(context);
               },

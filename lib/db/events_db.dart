@@ -19,7 +19,6 @@ class EventsDatabaseService {
           id TEXT PRIMARY KEY NOT NULL,
           title TEXT NOT NULL,
           date INTEGER NOT NULL,
-          shouldNotify INTEGER NOT NULL
         )
       """,
     );
