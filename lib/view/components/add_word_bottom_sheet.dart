@@ -1,11 +1,11 @@
 import 'dart:io';
 
 import 'package:aphasia/constants.dart';
-import 'package:aphasia/extensions/capitalize.dart';
+import 'package:aphasia/extensions/string.dart';
 import 'package:aphasia/model/word.dart';
-import 'package:aphasia/providers/image_service.dart';
-import 'package:aphasia/providers/tts_provider.dart';
-import 'package:aphasia/providers/word_provider.dart';
+import 'package:aphasia/services/image_service_provider.dart';
+import 'package:aphasia/services/tts_service_provider.dart';
+import 'package:aphasia/providers/words_provider.dart';
 import 'package:aphasia/view/components/image_picker_card.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -19,8 +19,6 @@ class AddWordBottomSheet extends StatefulWidget {
 }
 
 class _AddWordBottomSheetState extends State<AddWordBottomSheet> {
-  double goldenRatio = 1.61803398875;
-
   final _key = GlobalKey<FormState>();
   final _wordController = TextEditingController();
   final _focusNode = FocusNode();
@@ -51,8 +49,9 @@ class _AddWordBottomSheetState extends State<AddWordBottomSheet> {
         children: [
           Text(
             "Aggiungi una nuova parola",
-            style: theme.textTheme.titleLarge!
-                .copyWith(overflow: TextOverflow.fade),
+            style: theme.textTheme.titleLarge!.copyWith(
+              overflow: TextOverflow.fade,
+            ),
           ),
           const SizedBox(height: kLargeSize),
           Form(
@@ -78,6 +77,8 @@ class _AddWordBottomSheetState extends State<AddWordBottomSheet> {
               ),
             ),
           ),
+          const Text("Aggiungi un'immagine:"),
+          const SizedBox(height: kSmallSize),
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [

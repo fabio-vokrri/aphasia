@@ -1,9 +1,9 @@
 import 'package:aphasia/constants.dart';
 import 'package:aphasia/providers/settings_provider.dart';
-import 'package:aphasia/providers/tts_provider.dart';
+import 'package:aphasia/services/tts_service_provider.dart';
 import 'package:aphasia/providers/user_provider.dart';
+import 'package:aphasia/view/components/custom_drawer.dart';
 import 'package:aphasia/view/components/reset_dialog.dart';
-import 'package:aphasia/view/pages/home.dart';
 import 'package:flutter/material.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -199,11 +199,6 @@ class _SettingsPageState extends State<SettingsPage> {
                   subtitle: const Text(
                     "Agevola le persone mancine nell'utilizzo dell'applicazione",
                   ),
-                  thumbIcon: MaterialStateProperty.all<Icon>(
-                    SettingsProvider.getIsRightToLeft
-                        ? const Icon(Icons.done)
-                        : const Icon(Icons.close),
-                  ),
                   value: SettingsProvider.getIsRightToLeft,
                   onChanged: (bool value) {
                     SettingsProvider.toggleRTL();
@@ -223,11 +218,6 @@ class _SettingsPageState extends State<SettingsPage> {
                   title: const Text("Rimuovi animazioni"),
                   subtitle: const Text(
                     "Previene gli elementi visivi dall'avere animazioni",
-                  ),
-                  thumbIcon: MaterialStateProperty.all<Icon>(
-                    SettingsProvider.getAnimationsAreRemoved
-                        ? const Icon(Icons.done)
-                        : const Icon(Icons.close),
                   ),
                   value: SettingsProvider.getAnimationsAreRemoved,
                   onChanged: (bool value) {

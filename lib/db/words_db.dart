@@ -6,11 +6,9 @@ import 'package:sqflite/sqflite.dart';
 class WordsDatabaseService {
   static const String _dbName = "words";
 
-  static final _databaseService = WordsDatabaseService._internal();
-
+  static final _databaseService = WordsDatabaseService._();
   factory WordsDatabaseService() => _databaseService;
-
-  WordsDatabaseService._internal();
+  WordsDatabaseService._();
 
   /// the reference to the database
   static Database? _database;

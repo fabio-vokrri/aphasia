@@ -32,12 +32,17 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_displaymode: ^0.6.0
+  flutter_local_notifications: ^16.3.2
+  flutter_localizations:
+    sdk: flutter
   flutter_tts: ^3.8.5
   image_picker: ^1.0.7
+  intl: ^0.18.1
   path: ^1.8.3
   provider: ^6.1.1
   shared_preferences: ^2.2.2
   sqflite: ^2.3.0
+  uuid: ^4.3.3
 
 dev_dependencies:
   flutter_test:

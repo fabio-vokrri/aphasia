@@ -1,5 +1,5 @@
 import 'package:aphasia/constants.dart';
-import 'package:aphasia/extensions/capitalize.dart';
+import 'package:aphasia/extensions/string.dart';
 import 'package:aphasia/providers/user_provider.dart';
 import 'package:aphasia/view/pages/home.dart';
 import 'package:flutter/material.dart';

@@ -1,5 +1,5 @@
 import 'package:aphasia/providers/edit_mode_provider.dart';
-import 'package:aphasia/providers/word_provider.dart';
+import 'package:aphasia/providers/words_provider.dart';
 import 'package:aphasia/view/components/add_word_bottom_sheet.dart';
 import 'package:aphasia/view/components/delete_words_dialog.dart';
 import 'package:aphasia/view/components/no_selected_words_dialog.dart';
@@ -14,8 +14,7 @@ class AddWordFAB extends StatelessWidget {
     final wordProvider = Provider.of<WordProvider>(context);
     final editModeProvider = Provider.of<EditModeProvider>(context);
 
-    return FloatingActionButton.extended(
-      label: Text(editModeProvider.isEditMode ? "Elimina " : "Aggiungi"),
+    return FloatingActionButton(
       tooltip: editModeProvider.isEditMode
           ? "Rimuovi selezionati"
           : "Aggiungi nuova parola",
@@ -40,7 +39,7 @@ class AddWordFAB extends StatelessWidget {
           );
         }
       },
-      icon: Icon(editModeProvider.isEditMode ? Icons.delete : Icons.add),
+      child: Icon(editModeProvider.isEditMode ? Icons.delete : Icons.add),
     );
   }
 }

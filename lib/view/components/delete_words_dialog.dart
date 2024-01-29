@@ -1,5 +1,5 @@
 import 'package:aphasia/providers/edit_mode_provider.dart';
-import 'package:aphasia/providers/word_provider.dart';
+import 'package:aphasia/providers/words_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

@@ -1,13 +1,15 @@
 import 'package:aphasia/providers/edit_mode_provider.dart';
+import 'package:aphasia/providers/events_provider.dart';
 import 'package:aphasia/providers/page_provider.dart';
 import 'package:aphasia/providers/settings_provider.dart';
 import 'package:aphasia/providers/user_provider.dart';
-import 'package:aphasia/providers/word_provider.dart';
+import 'package:aphasia/providers/words_provider.dart';
 import 'package:aphasia/view/pages/home.dart';
 import 'package:aphasia/view/pages/welcome.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_displaymode/flutter_displaymode.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 
 void main(List<String> args) async {
@@ -52,6 +54,7 @@ class Aphasia extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => WordProvider()),
         ChangeNotifierProvider(create: (context) => EditModeProvider()),
         ChangeNotifierProvider(create: (context) => PageProvider()),
+        ChangeNotifierProvider(create: (context) => EventsProvider()),
       ],
       // consumes the edit mode provider
       // in order to set the seed color to red when in edit mode.
@@ -64,6 +67,13 @@ class Aphasia extends StatelessWidget {
           return MaterialApp(
             title: "Aphasia",
             debugShowCheckedModeBanner: false,
+            localizationsDelegates: const [
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            supportedLocales: const [Locale("it")],
+            locale: const Locale.fromSubtags(languageCode: "it"),
             theme: ThemeData(colorSchemeSeed: editModeProvider.getColor),
             home: isNewUser ? const WelcomePage() : const HomePage(),
           );
