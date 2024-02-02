@@ -18,7 +18,7 @@ class EventsDatabaseService {
         CREATE TABLE $_dbName(
           id TEXT PRIMARY KEY NOT NULL,
           title TEXT NOT NULL,
-          date INTEGER NOT NULL,
+          date INTEGER NOT NULL
         )
       """,
     );
@@ -58,7 +58,16 @@ class EventsDatabaseService {
 
   Future<List<Event>> get getEvents async {
     final db = await _databaseService.getInstance;
+    final now = DateTime.now().millisecondsSinceEpoch;
 
+    // removes all the past events
+    await db.delete(
+      _dbName,
+      where: "date < ?",
+      whereArgs: [now],
+    );
+
+    // retrieves all the saved events
     final List<Map<String, dynamic>> query = await db.query(_dbName);
 
     return List.generate(
